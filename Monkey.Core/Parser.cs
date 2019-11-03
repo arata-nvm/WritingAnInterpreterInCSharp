@@ -62,6 +62,8 @@ namespace monkey_csharp.Monkey.Core
             RegisterPrefix(TokenType.Lparen, ParseGroupedExpression);
             RegisterPrefix(TokenType.If, ParseIfExpression);
             RegisterPrefix(TokenType.Function, ParseFunctionLiteral);
+            RegisterPrefix(TokenType.Lbracket, ParseArrayLiteral);
+            RegisterPrefix(TokenType.Lbrace, ParseHashLiteral);
 
             this._infixParseFn = new Dictionary<TokenType, InfixParseFn>();
             RegisterInfix(TokenType.Plus, ParseInfixExpression);
@@ -74,11 +76,7 @@ namespace monkey_csharp.Monkey.Core
             RegisterInfix(TokenType.Lt, ParseInfixExpression);
             RegisterInfix(TokenType.Gt, ParseInfixExpression);
             RegisterInfix(TokenType.Lparen, ParseCallExpression);
-            
-            RegisterPrefix(TokenType.Lbracket, ParseArrayLiteral);
             RegisterInfix(TokenType.Lbracket, ParseIndexExpression);
-            
-            RegisterPrefix(TokenType.Lbrace, ParseHashLiteral);
             
             NextToken();
             NextToken();
@@ -134,9 +132,7 @@ namespace monkey_csharp.Monkey.Core
             {
                 var statement = ParseStatement();
                 if (statement != null)
-                {
                     code.Statements.Add(statement);
-                }
                 NextToken();
             }
 
@@ -169,7 +165,7 @@ namespace monkey_csharp.Monkey.Core
 
             statement.Value = ParseExpression(Precedence.Lowest);
             
-            while (PeekTokenIs(TokenType.Semicolon))
+            if (PeekTokenIs(TokenType.Semicolon))
                 NextToken();
 
             return statement;
@@ -192,7 +188,8 @@ namespace monkey_csharp.Monkey.Core
         {
             var statement = new Ast.ExpressionStatement
             {
-                Token = this._curToken, Expression = ParseExpression(Precedence.Lowest)
+                Token = this._curToken,
+                Expression = ParseExpression(Precedence.Lowest)
             };
 
 
