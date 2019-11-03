@@ -4,19 +4,19 @@ namespace monkey_csharp.Monkey.Core
 {
     public class Environment
     {
-        private Dictionary<string, Object> store;
+        private Dictionary<string, IObject> store;
 
         public Environment()
         {
-            this.store = new Dictionary<string, Object>();
+            this.store = new Dictionary<string, IObject>();
         }
 
-        public Object Get(string name)
+        public IObject Get(string name)
         {
             return store.TryGetValue(name, out var value) ? value : null;
         }
 
-        public Object Set(string name, Object val)
+        public IObject Set(string name, IObject val)
         {
             store[name] = val;
             return val;

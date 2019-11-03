@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Sockets;
 using System.Text;
 
 namespace monkey_csharp.Monkey.Core
 {
-    public class AST
+    public class Ast
     {
         public interface INode
         {
@@ -329,6 +326,75 @@ namespace monkey_csharp.Monkey.Core
             public override string ToString()
             {
                 return $"{this.Function}({string.Join(',', this.Arguments)})";
+            }
+        }
+        
+        public class ArrayLiteral : IExpression
+        {
+            public Token Token;
+            public List<IExpression> Elements;
+
+            public string TokenLiteral()
+            {
+                return this.Token.Literal;
+            }
+
+            public void ExpressionNode()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override string ToString()
+            {
+                var elem = string.Join(',', this.Elements.Select(e => e.ToString()));
+                return $"[{elem}]";
+            }
+        }
+        
+        public class IndexExpression : IExpression
+        {
+            public Token Token;
+            public IExpression Left;
+            public IExpression Index;
+
+            public string TokenLiteral()
+            {
+                return this.Token.Literal;
+            }
+
+            public void ExpressionNode()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override string ToString()
+            {
+                return $"({Left}[{Index}])";
+            }
+        }
+        
+        public class HashLiteral : IExpression
+        {
+            public Token Token;
+            public Dictionary<IExpression, IExpression> Pairs;
+
+            public string TokenLiteral()
+            {
+                return this.Token.Literal;
+            }
+
+            public void ExpressionNode()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override string ToString()
+            {
+                var pairs = string.Join(
+                    ',', 
+                    Pairs.Select(p => $"{p.Key} : {p.Value}")
+                );
+                return $"{{{pairs}}}";
             }
         }
     }

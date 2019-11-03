@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace monkey_csharp.Monkey.Core
 {
     
-    using BuiltinFunction = Func<List<Object>, Object>;
+    using BuiltinFunction = Func<List<IObject>, IObject>;
 
     public enum Type
     {
@@ -17,16 +17,23 @@ namespace monkey_csharp.Monkey.Core
         Error,
         Function,
         Builtin,
+        Array,
+        Hash,
     }
 
-    public interface Object
+    public interface IObject
     {
         Type getType();
 
         string Inspect();
     }
+    
+    public interface IHashable
+    {
+        HashKey HashKey();
+    }
 
-    public class Integer : Object
+    public class Integer : IObject, IHashable
     {
         public int Value;
 
@@ -36,23 +43,33 @@ namespace monkey_csharp.Monkey.Core
         {
             return $"{this.Value}";
         }
+
+        public HashKey HashKey()
+        {
+            return new HashKey {Type = getType(), Value = Value};
+        }
     }
     
-    public class Boolean : Object
+    public class Boolean : IObject, IHashable
     {
         public bool Value;
 
-        public Type getType() => Type.Boolean;
+        public Type getType() => Core.Type.Boolean;
 
         public string Inspect()
         {
             return $"{this.Value}";
         }
+
+        public HashKey HashKey()
+        {
+            return new HashKey {Type = getType(), Value = this.Value ? 1 : 0};
+        }
     }
     
-    public class Null : Object
+    public class Null : IObject
     {
-        public Type getType() => Type.Null;
+        public Type getType() => Core.Type.Null;
 
         public string Inspect()
         {
@@ -60,11 +77,11 @@ namespace monkey_csharp.Monkey.Core
         }
     }
     
-    public class Return : Object
+    public class Return : IObject
     {
-        public Object Value;
+        public IObject Value;
         
-        public Type getType() => Type.Return;
+        public Type getType() => Core.Type.Return;
 
         public string Inspect()
         {
@@ -72,11 +89,11 @@ namespace monkey_csharp.Monkey.Core
         }
     }
     
-    public class Error : Object
+    public class Error : IObject
     {
         public string Message;
         
-        public Type getType() => Type.Error;
+        public Type getType() => Core.Type.Error;
 
         public string Inspect()
         {
@@ -84,13 +101,13 @@ namespace monkey_csharp.Monkey.Core
         }
     }
 
-    public class Function : Object
+    public class Function : IObject
     {
-        public List<AST.Identifier> Parameters;
-        public AST.BlockStatement Body;
+        public List<Ast.Identifier> Parameters;
+        public Ast.BlockStatement Body;
         public Environment Env;
 
-        public Type getType() => Type.Function;
+        public Type getType() => Core.Type.Function;
 
         public string Inspect()
         {
@@ -99,27 +116,108 @@ namespace monkey_csharp.Monkey.Core
         }
     }
 
-    public class String : Object
+    public class String : IObject, IHashable
     {
         public string Value;
 
-        public Type getType() => Type.String;
+        public Type getType() => Core.Type.String;
 
         public string Inspect()
         {
             return this.Value;
         }
+
+        public HashKey HashKey()
+        {
+            var s1 = Value.Substring(0, Value.Length / 2);
+            var s2 = Value.Substring(Value.Length / 2);
+            var hash = s1.GetHashCode() << 32 | s2.GetHashCode();
+            return new HashKey { Type = getType(), Value = hash };
+        }
     }
     
-    public class Builtin : Object
+    public class Builtin : IObject
     {
         public BuiltinFunction Fn;
 
-        public Type getType() => Type.Builtin;
+        public Type getType() => Core.Type.Builtin;
 
         public string Inspect()
         {
             return "builtin function";
         }
     }
+    
+    public class Array : IObject
+    {
+        public List<IObject> Elements;
+
+        public Type getType() => Core.Type.Array;
+
+        public string Inspect()
+        {
+            var elm = string.Join(',', this.Elements.Select(e => e.Inspect()));
+            return $"[{elm}]";
+        }
+
+        public Array Clone()
+        {
+            return new Array {Elements = new List<IObject>(this.Elements)};
+        }
+    }
+    
+    public class HashKey
+    {
+        public Type Type;
+        public int Value;
+
+        public override bool Equals(object obj)
+        {
+            return this == obj as HashKey;
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int) Type * 397) ^ Value;
+            }
+        }
+
+        public static bool operator ==(HashKey a, HashKey b)
+        {
+            if (a is null || b is null)
+                return false;
+
+            return a.Type == b.Type && a.Value == b.Value;
+        }
+
+        public static bool operator !=(HashKey a, HashKey b)
+        {
+            return !(a == b);
+        }
+    }
+
+    public class HashPair
+    {
+        public IObject Key;
+        public IObject Value;
+    }
+
+    public class Hash : IObject
+    {
+        public Dictionary<HashKey, HashPair> Pairs;
+        
+        public Type getType() => Type.Hash;
+
+        public string Inspect()
+        {
+            var pairs = string.Join(
+                ',', 
+                Pairs.Select(p => $"{p.Value.Key.Inspect()} : {p.Value.Value.Inspect()}")
+                );
+            return $"{{{pairs}}}";
+        }
+    }
+    
+    
 }

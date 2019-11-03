@@ -1,71 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace monkey_csharp.Monkey.Core
 {
-    public enum TokenType
-    {
-        Illegal,
-        Eof,
-        
-        Ident,
-        Int,
-        String,
-        
-        Assign,
-        Plus,
-        Minus,
-        Bang,
-        Asterisc,
-        Slash,
-        
-        Lt,
-        Gt,
-        
-        Comma,
-        Colon,
-        Semicolon,
-        
-        Lparen,
-        Rparen,
-        Lbrace,
-        Rbrace,
-        
-        Function,
-        Let,
-        True,
-        False,
-        If,
-        Else,
-        Return,
-        
-        Eq,
-        NotEq,
-    }
-    
-    public class Token
-    {
-        public TokenType Type;
-        public string Literal;
-
-        public Token(TokenType tokenType, char ch)
-        {
-            this.Type = tokenType;
-            this.Literal = ch.ToString();
-        }
-        
-        public Token(TokenType tokenType, string str)
-        {
-            this.Type = tokenType;
-            this.Literal = str;
-        }
-
-        public override string ToString()
-        {
-            return $"Token(Type: {this.Type}, Literal: {this.Literal})";
-        }
-    }
-    
     public class Lexer
     {
         string _input;
@@ -73,21 +9,20 @@ namespace monkey_csharp.Monkey.Core
         int _readPosition;
         char _ch;
 
-        private readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
-        {
-            {"func", TokenType.Function},
-            {"let", TokenType.Let},
-            {"true", TokenType.True},
-            {"false", TokenType.False},
-            {"if", TokenType.If},
-            {"else", TokenType.Else},
-            {"return", TokenType.Return}
-        };
-
         public Lexer(string input)
         {
             this._input = input;
             ReadChar();
+        }
+        
+        private bool IsDigit(char ch)
+        {
+            return char.IsDigit(ch);
+        }
+
+        private bool IsLetter(char ch)
+        {
+            return char.IsLetter(ch);
         }
 
         private void ReadChar()
@@ -104,54 +39,7 @@ namespace monkey_csharp.Monkey.Core
             this._position = this._readPosition;
             this._readPosition++;
         }
-
-        private bool IsLetter(char ch)
-        {
-            return char.IsLetter(ch);
-        }
-
-        private string ReadIdentifier()
-        {
-            var position = this._position;
-            while (IsLetter(this._ch))
-                ReadChar();
-
-            return this._input.Substring(position, this._position - position);
-        }
-
-        private void SkipWhiteSpace()
-        {
-            while (this._ch == ' ' || this._ch == '\t' || this._ch == '\n')
-                ReadChar();
-        }
-
-        private bool IsDigit(char ch)
-        {
-            return char.IsDigit(ch);
-        }
-
-        private string ReadNumber()
-        {
-            var position = this._position;
-            while (IsDigit(this._ch))
-                ReadChar();
-
-            return this._input.Substring(position, this._position - position);
-        }
-
-        private string ReadString()
-        {
-            var pos = this._position + 1;
-            while (true)
-            {
-                ReadChar();
-                if (this._ch == '"' || this._readPosition > this._input.Length)
-                    break;
-            }
-
-            return this._input.Substring(pos, this._position - pos);
-        }
-
+        
         private char PeekChar()
         {
             if (this._readPosition >= this._input.Length)
@@ -161,7 +49,7 @@ namespace monkey_csharp.Monkey.Core
             return this._input[this._readPosition];
         }
         
-        public Token NextToken()
+                public Token NextToken()
         {
             Token tok;
             
@@ -239,6 +127,12 @@ namespace monkey_csharp.Monkey.Core
                 case '}':
                     tok = new Token(TokenType.Rbrace, this._ch);
                     break;
+                case '[':
+                    tok = new Token(TokenType.Lbracket, this._ch);
+                    break;
+                case ']':
+                    tok = new Token(TokenType.Rbracket, this._ch);
+                    break;
                 case '"':
                     tok = new Token(TokenType.String, ReadString());
                     break;
@@ -246,7 +140,7 @@ namespace monkey_csharp.Monkey.Core
                     if (IsLetter(this._ch))
                     {
                         string l = ReadIdentifier();
-                        TokenType t = lookUpIdent(l);
+                        TokenType t = Token.LookUpIdent(l);
                         return new Token(t, l);
                     }
                     else if (IsDigit(this._ch))
@@ -264,14 +158,41 @@ namespace monkey_csharp.Monkey.Core
             return tok;
         }
 
-        TokenType lookUpIdent(string ident)
+        private string ReadIdentifier()
         {
-            if (keywords.ContainsKey(ident))
+            var position = this._position;
+            while (IsLetter(this._ch))
+                ReadChar();
+
+            return this._input.Substring(position, this._position - position);
+        }
+
+        private string ReadNumber()
+        {
+            var position = this._position;
+            while (IsDigit(this._ch))
+                ReadChar();
+
+            return this._input.Substring(position, this._position - position);
+        }
+        
+        private string ReadString()
+        {
+            var pos = this._position + 1;
+            while (true)
             {
-                return keywords[ident];
+                ReadChar();
+                if (this._ch == '"' || this._readPosition > this._input.Length)
+                    break;
             }
 
-            return TokenType.Ident;
+            return this._input.Substring(pos, this._position - pos);
+        }
+        
+        private void SkipWhiteSpace()
+        {
+            while (this._ch == ' ' || this._ch == '\t' || this._ch == '\n')
+                ReadChar();
         }
     }
 }

@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace monkey_csharp.Monkey.Core
 {
@@ -15,75 +13,74 @@ namespace monkey_csharp.Monkey.Core
             return input ? True : False;
         }
          
-        public static Object Eval(AST.INode node, Environment env)
+        public static IObject Eval(Ast.INode node, Environment env)
         {
             var type = node.GetType();
 
-            if (type == typeof(AST.Code))
-                return EvalCode((AST.Code) node, env);
+            if (type == typeof(Ast.Code))
+                return EvalCode((Ast.Code) node, env);
             
-            else if (type == typeof(AST.ExpressionStatement))
-                return Eval(((AST.ExpressionStatement) node).Expression, env);
+            else if (type == typeof(Ast.ExpressionStatement))
+                return Eval(((Ast.ExpressionStatement) node).Expression, env);
             
-            else if (type == typeof(AST.BlockStatement))
-                return EvalBlockStatement((AST.BlockStatement) node, env);
+            else if (type == typeof(Ast.BlockStatement))
+                return EvalBlockStatement((Ast.BlockStatement) node, env);
             
-            else if (type == typeof(AST.ReturnStatement))
+            else if (type == typeof(Ast.ReturnStatement))
             {
-                var val = Eval(((AST.ReturnStatement) node).ReturnValue, env);
+                var val = Eval(((Ast.ReturnStatement) node).ReturnValue, env);
                 if (IsError(val)) return val;
                 return new Return {Value = val};
             }
             
-            else if (type == typeof(AST.LetStatement))
+            else if (type == typeof(Ast.LetStatement))
             {
-                var val = Eval(((AST.LetStatement) node).Value, env);
+                var val = Eval(((Ast.LetStatement) node).Value, env);
                 if (IsError(val)) return val;
-                env.Set(((AST.LetStatement) node).Name.Value, val);
+                env.Set(((Ast.LetStatement) node).Name.Value, val);
             }
             
-
-            else if (type == typeof(AST.IntegerLiteral))
-                return new Integer {Value = ((AST.IntegerLiteral) node).Value};
+            else if (type == typeof(Ast.IntegerLiteral))
+                return new Integer {Value = ((Ast.IntegerLiteral) node).Value};
             
-            else if (type == typeof(AST.StringLiteral))
-                return new String {Value = ((AST.StringLiteral) node).Value};
+            else if (type == typeof(Ast.StringLiteral))
+                return new String {Value = ((Ast.StringLiteral) node).Value};
             
-            else if (type == typeof(AST.Boolean))
-                return FromNativeBoolean(((AST.Boolean) node).Value);
+            else if (type == typeof(Ast.Boolean))
+                return FromNativeBoolean(((Ast.Boolean) node).Value);
             
-            else if (type == typeof(AST.PrefixExpression))
+            else if (type == typeof(Ast.PrefixExpression))
             {
-                var prefix = (AST.PrefixExpression) node;
+                var prefix = (Ast.PrefixExpression) node;
                 var right = Eval(prefix.Right, env);
                 if (IsError(right)) return right;
                 return EvalPrefixExpression(prefix.Operator, right);
             }
-            else if (type == typeof(AST.InfixExpression))
+            else if (type == typeof(Ast.InfixExpression))
             {
-                var infix = (AST.InfixExpression) node;
+                var infix = (Ast.InfixExpression) node;
                 var left = Eval(infix.Left, env);
                 if (IsError(left)) return left;
                 var right = Eval(infix.Right, env);
                 if (IsError(left)) return right;
                 return EvalInfixExpression(infix.Operator, left, right);
             }
-            else if (type == typeof(AST.IfExpression))
-                return EvalIfExpression((AST.IfExpression) node, env);
+            else if (type == typeof(Ast.IfExpression))
+                return EvalIfExpression((Ast.IfExpression) node, env);
 
-            else if (type == typeof(AST.Identifier))
-                return EvalIdentifier((AST.Identifier) node, env);
+            else if (type == typeof(Ast.Identifier))
+                return EvalIdentifier((Ast.Identifier) node, env);
             
-            else if (type == typeof(AST.FunctionLiteral))
+            else if (type == typeof(Ast.FunctionLiteral))
             {
-                var func = (AST.FunctionLiteral) node;
+                var func = (Ast.FunctionLiteral) node;
                 var param = func.Parameters;
                 var body = func.Body;
                 return new Function {Parameters = param, Env = env, Body = body};
             }
-            else if (type == typeof(AST.CallExpression))
+            else if (type == typeof(Ast.CallExpression))
             {
-                var call = (AST.CallExpression) node;
+                var call = (Ast.CallExpression) node;
                 var func = Eval(call.Function, env);
                 if (IsError(func)) return func;
                 var args = EvalExpressions(call.Arguments, env);
@@ -91,13 +88,35 @@ namespace monkey_csharp.Monkey.Core
                     return args[0];
                 return ApplyFunction(func, args);
             }
+            else if (type == typeof(Ast.ArrayLiteral))
+            {
+                var elements = EvalExpressions(((Ast.ArrayLiteral) node).Elements, env);
+                if (elements.Count == 1 && IsError(elements[0]))
+                    return elements[0];
+
+                return new Array {Elements = elements};
+            }
+            else if (type == typeof(Ast.IndexExpression))
+            {
+                var indexExp = (Ast.IndexExpression) node;
+                
+                var left = Eval(indexExp.Left, env);
+                if (IsError(left)) return left;
+                
+                var index = Eval(indexExp.Index, env);
+                if (IsError(index)) return index;
+
+                return EvalIndexExpression(left, index);
+            }
+            else if (type == typeof(Ast.HashLiteral))
+                return EvalHashLiteral((Ast.HashLiteral) node, env);
             
             return null;
         }
 
-        private static Object EvalCode(AST.Code code, Environment env)
+        private static IObject EvalCode(Ast.Code code, Environment env)
         {
-            Object result = null;
+            IObject result = null;
 
             foreach (var s in code.Statements)
             {
@@ -113,9 +132,9 @@ namespace monkey_csharp.Monkey.Core
             return result;
         }
 
-        private static Object EvalStatements(List<AST.IStatement> statements, Environment env)
+        private static IObject EvalStatements(List<Ast.IStatement> statements, Environment env)
         {
-            Object result = null;
+            IObject result = null;
             
             foreach (var s in statements)
             {
@@ -131,9 +150,9 @@ namespace monkey_csharp.Monkey.Core
             return result;
         }
 
-        private static Object EvalBlockStatement(AST.BlockStatement block, Environment env)
+        private static IObject EvalBlockStatement(Ast.BlockStatement block, Environment env)
         {
-            Object result = null;
+            IObject result = null;
             
             foreach (var s in block.Statements)
             {
@@ -148,7 +167,7 @@ namespace monkey_csharp.Monkey.Core
             return result;
         }
 
-        private static Object EvalPrefixExpression(string op, Object right)
+        private static IObject EvalPrefixExpression(string op, IObject right)
         {
             switch (op)
             {
@@ -161,7 +180,7 @@ namespace monkey_csharp.Monkey.Core
             }
         }
 
-        private static Object EvalBangOperatorExpression(Object right)
+        private static IObject EvalBangOperatorExpression(IObject right)
         {
             if (right == True)
                 return False;
@@ -172,7 +191,7 @@ namespace monkey_csharp.Monkey.Core
             return False;
         }
 
-        private static Object EvalMinusPrefixOperatorExpression(Object right)
+        private static IObject EvalMinusPrefixOperatorExpression(IObject right)
         {
             if (right.getType() != Type.Integer)
                 return new Error {Message = $"unknown operator: -{right.getType()}"};
@@ -182,7 +201,7 @@ namespace monkey_csharp.Monkey.Core
             return new Integer {Value = -value};
         }
 
-        private static Object EvalInfixExpression(string op, Object left, Object right)
+        private static IObject EvalInfixExpression(string op, IObject left, IObject right)
         {
             if (left.getType() == Type.Integer && right.getType() == Type.Integer)
                 return EvalIntegerInfixExpression(op, left, right);
@@ -198,7 +217,7 @@ namespace monkey_csharp.Monkey.Core
                 return new Error {Message = $"unknown operator: {left.getType()} {op} {right.getType()}"};
         }
 
-        private static Object EvalIntegerInfixExpression(string op, Object left, Object right)
+        private static IObject EvalIntegerInfixExpression(string op, IObject left, IObject right)
         {
             var leftVal = ((Integer) left).Value;
             var rightVal = ((Integer) right).Value;
@@ -226,7 +245,7 @@ namespace monkey_csharp.Monkey.Core
             }
         }
 
-        private static Object EvalStringInfixExpression(string op, Object left, Object right)
+        private static IObject EvalStringInfixExpression(string op, IObject left, IObject right)
         {
             if (op != "+")
                 return new Error {Message = $"unknown operator: {left.getType()} {op} {right.getType()}"};
@@ -236,7 +255,7 @@ namespace monkey_csharp.Monkey.Core
             return new String {Value = leftVal + rightVal};
         }
 
-        private static Object EvalIfExpression(AST.IfExpression ie, Environment env)
+        private static IObject EvalIfExpression(Ast.IfExpression ie, Environment env)
         {
             var condition = Eval(ie.Condition, env);
             if (IsError(condition))
@@ -250,7 +269,7 @@ namespace monkey_csharp.Monkey.Core
             return Null;
         }
 
-        private static bool IsTruthy(Object obj)
+        private static bool IsTruthy(IObject obj)
         {
             if (obj == Null)
                 return false;
@@ -262,7 +281,7 @@ namespace monkey_csharp.Monkey.Core
             return true;
         }
 
-        private static bool IsError(Object obj)
+        private static bool IsError(IObject obj)
         {
             if (obj != null)
                 return obj.getType() == Type.Error;
@@ -270,7 +289,7 @@ namespace monkey_csharp.Monkey.Core
             return false;
         }
 
-        private static Object EvalIdentifier(AST.Identifier node, Environment env)
+        private static IObject EvalIdentifier(Ast.Identifier node, Environment env)
         {
             var val = env.Get(node.Value);
             if (val != null)
@@ -282,14 +301,14 @@ namespace monkey_csharp.Monkey.Core
             return new Error {Message = $"identifier not found: {node.Value}"};
         }
 
-        private static List<Object> EvalExpressions(List<AST.IExpression> exps, Environment env)
+        private static List<IObject> EvalExpressions(List<Ast.IExpression> exps, Environment env)
         {
-            List<Object> result = new List<Object>();
+            List<IObject> result = new List<IObject>();
             
-            foreach (AST.IExpression e in exps)
+            foreach (Ast.IExpression e in exps)
             {
                 var evaluated = Eval(e, env);
-                if (IsError(evaluated)) return new List<Object> {evaluated};
+                if (IsError(evaluated)) return new List<IObject> {evaluated};
 
                 result.Add(evaluated);
             }
@@ -297,7 +316,7 @@ namespace monkey_csharp.Monkey.Core
             return result;
         }
 
-        private static Object ApplyFunction(Object fn, List<Object> args)
+        private static IObject ApplyFunction(IObject fn, List<IObject> args)
         {
             if (fn.GetType() == typeof(Function))
             {
@@ -311,7 +330,7 @@ namespace monkey_csharp.Monkey.Core
             return new Error {Message = $"not a function: {fn.getType()}"};
         }
 
-        private static Environment ExtendFunctionEnv(Function fn, List<Object> args)
+        private static Environment ExtendFunctionEnv(Function fn, List<IObject> args)
         {
             var env = fn.Env.Clone();
 
@@ -323,10 +342,67 @@ namespace monkey_csharp.Monkey.Core
             return env;
         }
 
-        private static Object UnwrapReturnValue(Object obj)
+        private static IObject UnwrapReturnValue(IObject obj)
         {
             if (obj.GetType() != typeof(Return)) return obj;
             return ((Return) obj).Value;
+        }
+
+        private static IObject EvalIndexExpression(IObject left, IObject index)
+        {
+            if (left.getType() == Type.Array && index.getType() == Type.Integer)
+                return EvalArrayExpression(left, index);
+            if (left.getType() == Type.Hash)
+                return EvalHashIndexExpression(left, index);
+
+            return new Error {Message = $"index operator not supported: {left.getType()}"};
+        }
+
+        private static IObject EvalHashIndexExpression(IObject hash, IObject index)
+        {
+            var hashObject = (Hash) hash;
+
+            if (!(index is IHashable key))
+                return new Error {Message = $"unusable as hash key: {index.getType()}"};
+            
+            if (!hashObject.Pairs.ContainsKey(key.HashKey()))
+                return Null;
+
+            return hashObject.Pairs[key.HashKey()].Value;
+        }
+
+        private static IObject EvalArrayExpression(IObject array, IObject index)
+        {
+            var arrayObject = (Array) array;
+            var idx = ((Integer) index).Value;
+            var max = arrayObject.Elements.Count - 1;
+
+            if (idx < 0 || idx > max)
+                return Null;
+
+            return arrayObject.Elements[idx];
+        }
+
+        private static IObject EvalHashLiteral(Ast.HashLiteral node, Environment env)
+        {
+            var pairs = new Dictionary<HashKey, HashPair>();
+
+            foreach (var pair in node.Pairs)
+            {
+                var key = Eval(pair.Key, env);
+                if (IsError(key)) return key;
+
+                if (!(key is IHashable hashKey))
+                    return new Error {Message = $"unusable as hash key: {key.getType()}"};
+
+                var value = Eval(pair.Value, env);
+                if (IsError(value)) return value;
+
+                var hashed = hashKey.HashKey();
+                pairs[hashed] = new HashPair {Key = key, Value = value};
+            }
+
+            return new Hash {Pairs = pairs};
         }
     }
 }

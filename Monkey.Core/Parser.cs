@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace monkey_csharp.Monkey.Core
 {
-    using PrefixParseFn = Func<AST.IExpression>;
-    using InfixParseFn = Func<AST.IExpression, AST.IExpression>;
+    using PrefixParseFn = Func<Ast.IExpression>;
+    using InfixParseFn = Func<Ast.IExpression, Ast.IExpression>;
     
     public enum Precedence
     {
@@ -15,6 +15,7 @@ namespace monkey_csharp.Monkey.Core
         Product,
         Prefix,
         Call,
+        Index,
     }
 
     public class Parser
@@ -29,7 +30,8 @@ namespace monkey_csharp.Monkey.Core
             {TokenType.Minus, Precedence.Sum},
             {TokenType.Slash, Precedence.Product},
             {TokenType.Asterisc, Precedence.Prefix},
-            {TokenType.Lparen, Precedence.Call}
+            {TokenType.Lparen, Precedence.Call},
+            {TokenType.Lbracket, Precedence.Index}
         };
         
         private Lexer _l;
@@ -72,6 +74,11 @@ namespace monkey_csharp.Monkey.Core
             RegisterInfix(TokenType.Lt, ParseInfixExpression);
             RegisterInfix(TokenType.Gt, ParseInfixExpression);
             RegisterInfix(TokenType.Lparen, ParseCallExpression);
+            
+            RegisterPrefix(TokenType.Lbracket, ParseArrayLiteral);
+            RegisterInfix(TokenType.Lbracket, ParseIndexExpression);
+            
+            RegisterPrefix(TokenType.Lbrace, ParseHashLiteral);
             
             NextToken();
             NextToken();
@@ -116,11 +123,11 @@ namespace monkey_csharp.Monkey.Core
             this.Errors.Add(msg);
         }
         
-        public AST.Code ParseCode()
+        public Ast.Code ParseCode()
         {
-            var code = new AST.Code
+            var code = new Ast.Code
             {
-                Statements = new List<AST.IStatement>()
+                Statements = new List<Ast.IStatement>()
             };
 
             while (!CurTokenIs(TokenType.Eof))
@@ -136,7 +143,7 @@ namespace monkey_csharp.Monkey.Core
             return code;
         }
         
-        private AST.IStatement ParseStatement()
+        private Ast.IStatement ParseStatement()
         {
             switch (this._curToken.Type)
             {
@@ -149,12 +156,12 @@ namespace monkey_csharp.Monkey.Core
             }
         }
         
-        private AST.LetStatement ParseLetStatement()
+        private Ast.LetStatement ParseLetStatement()
         {
-            var statement = new AST.LetStatement {Token = this._curToken};
+            var statement = new Ast.LetStatement {Token = this._curToken};
             if (!ExpectPeek(TokenType.Ident)) return null;
 
-            statement.Name = new AST.Identifier {Token = this._curToken, Value = this._curToken.Literal};
+            statement.Name = new Ast.Identifier {Token = this._curToken, Value = this._curToken.Literal};
 
             if (!ExpectPeek(TokenType.Assign)) return null;
             
@@ -168,9 +175,9 @@ namespace monkey_csharp.Monkey.Core
             return statement;
         }
 
-        private AST.ReturnStatement ParseReturnStatement()
+        private Ast.ReturnStatement ParseReturnStatement()
         {
-            var statement = new AST.ReturnStatement {Token = this._curToken};
+            var statement = new Ast.ReturnStatement {Token = this._curToken};
             NextToken();
 
             statement.ReturnValue = ParseExpression(Precedence.Lowest);
@@ -181,9 +188,9 @@ namespace monkey_csharp.Monkey.Core
             return statement;
         }
 
-        private AST.ExpressionStatement ParseExpressionStatement()
+        private Ast.ExpressionStatement ParseExpressionStatement()
         {
-            var statement = new AST.ExpressionStatement
+            var statement = new Ast.ExpressionStatement
             {
                 Token = this._curToken, Expression = ParseExpression(Precedence.Lowest)
             };
@@ -195,7 +202,7 @@ namespace monkey_csharp.Monkey.Core
             return statement;
         }
 
-        private AST.IExpression ParseExpression(Precedence precedence)
+        private Ast.IExpression ParseExpression(Precedence precedence)
         {
             if (!this._prefixParseFn.TryGetValue(this._curToken.Type, out var prefix))
             {
@@ -208,10 +215,7 @@ namespace monkey_csharp.Monkey.Core
             while (!PeekTokenIs(TokenType.Semicolon) && precedence < PeekPrecedence())
             {
                 if (!this._infixParseFn.TryGetValue(this._peekToken.Type, out var infix))
-
-                {
                     return leftExp;
-                }
                 
                 NextToken();
 
@@ -241,14 +245,14 @@ namespace monkey_csharp.Monkey.Core
             return Precedence.Lowest;
         }
 
-        private AST.IExpression ParseIdentifier()
+        private Ast.IExpression ParseIdentifier()
         {
-            return new AST.Identifier {Token = this._curToken, Value = this._curToken.Literal};
+            return new Ast.Identifier {Token = this._curToken, Value = this._curToken.Literal};
         }
 
-        private AST.IExpression ParseIntegerLiteral()
+        private Ast.IExpression ParseIntegerLiteral()
         {
-            var lit = new AST.IntegerLiteral {Token = this._curToken};
+            var lit = new Ast.IntegerLiteral {Token = this._curToken};
 
             if (!int.TryParse(this._curToken.Literal, out var value))
             {
@@ -262,14 +266,14 @@ namespace monkey_csharp.Monkey.Core
             return lit;
         }
 
-        private AST.IExpression ParseStringLiteral()
+        private Ast.IExpression ParseStringLiteral()
         {
-            return new AST.StringLiteral {Token = this._curToken, Value = this._curToken.Literal};
+            return new Ast.StringLiteral {Token = this._curToken, Value = this._curToken.Literal};
         }
 
-        private AST.IExpression ParsePrefixExpression()
+        private Ast.IExpression ParsePrefixExpression()
         {
-            var expression = new AST.PrefixExpression
+            var expression = new Ast.PrefixExpression
             {
                 Token = this._curToken,
                 Operator = this._curToken.Literal
@@ -282,9 +286,9 @@ namespace monkey_csharp.Monkey.Core
             return expression;
         }
         
-        private AST.IExpression ParseInfixExpression(AST.IExpression left)
+        private Ast.IExpression ParseInfixExpression(Ast.IExpression left)
         {
-            var expression = new AST.InfixExpression
+            var expression = new Ast.InfixExpression
             {
                 Token = this._curToken,
                 Operator = this._curToken.Literal,
@@ -298,16 +302,16 @@ namespace monkey_csharp.Monkey.Core
             return expression;
         }
 
-        private AST.IExpression ParseBoolean()
+        private Ast.IExpression ParseBoolean()
         {
-            return new AST.Boolean
+            return new Ast.Boolean
             {
                 Token = this._curToken,
                 Value = CurTokenIs(TokenType.True)
             };
         }
 
-        private AST.IExpression ParseGroupedExpression()
+        private Ast.IExpression ParseGroupedExpression()
         {
             NextToken();
 
@@ -319,9 +323,9 @@ namespace monkey_csharp.Monkey.Core
             return exp;
         }
 
-        private AST.IExpression ParseIfExpression()
+        private Ast.IExpression ParseIfExpression()
         {
-            var expression = new AST.IfExpression
+            var expression = new Ast.IfExpression
             {
                 Token = this._curToken
             };
@@ -352,12 +356,12 @@ namespace monkey_csharp.Monkey.Core
             return expression;
         }
 
-        private AST.BlockStatement ParseBlockStatement()
+        private Ast.BlockStatement ParseBlockStatement()
         {
-            var block = new AST.BlockStatement
+            var block = new Ast.BlockStatement
             {
                 Token = this._curToken,
-                Statements = new List<AST.IStatement>()
+                Statements = new List<Ast.IStatement>()
             };
             
             NextToken();
@@ -373,9 +377,9 @@ namespace monkey_csharp.Monkey.Core
             return block;
         }
 
-        private AST.IExpression ParseFunctionLiteral()
+        private Ast.IExpression ParseFunctionLiteral()
         {
-            var lit = new AST.FunctionLiteral
+            var lit = new Ast.FunctionLiteral
             {
                 Token = this._curToken
             };
@@ -393,9 +397,9 @@ namespace monkey_csharp.Monkey.Core
             return lit;
         }
 
-        private List<AST.Identifier> ParseFunctionParameters()
+        private List<Ast.Identifier> ParseFunctionParameters()
         {
-            var identifiers = new List<AST.Identifier>();
+            var identifiers = new List<Ast.Identifier>();
 
             if (PeekTokenIs(TokenType.Rparen))
             {
@@ -405,7 +409,7 @@ namespace monkey_csharp.Monkey.Core
             
             NextToken();
 
-            var ident = new AST.Identifier
+            var ident = new Ast.Identifier
             {
                 Token = this._curToken,
                 Value = this._curToken.Literal
@@ -416,7 +420,7 @@ namespace monkey_csharp.Monkey.Core
             {
                 NextToken();
                 NextToken();
-                ident = new AST.Identifier
+                ident = new Ast.Identifier
                 {
                     Token = this._curToken,
                     Value = this._curToken.Literal
@@ -430,44 +434,18 @@ namespace monkey_csharp.Monkey.Core
             return identifiers;
         }
 
-        private AST.IExpression ParseCallExpression(AST.IExpression function)
+        private Ast.IExpression ParseCallExpression(Ast.IExpression function)
         {
-            var exp = new AST.CallExpression
+            var exp = new Ast.CallExpression
             {
                 Token = this._curToken,
                 Function = function,
-                Arguments = ParseCallArguments()
+                Arguments = ParseExpressionList(TokenType.Rparen)
             };
 
             return exp;
         }
 
-        private List<AST.IExpression> ParseCallArguments()
-        {
-            var args = new List<AST.IExpression>();
-
-            if (PeekTokenIs(TokenType.Rparen))
-            {
-                NextToken();
-                return args;
-            }
-            
-            NextToken();
-            args.Add(ParseExpression(Precedence.Lowest));
-
-            while (PeekTokenIs(TokenType.Comma))
-            {
-                NextToken();
-                NextToken();
-                args.Add(ParseExpression(Precedence.Lowest));
-            }
-
-            if (!ExpectPeek(TokenType.Rparen))
-                return null;
-
-            return args;
-        }
-        
         private void RegisterPrefix(TokenType tokenType, PrefixParseFn fn)
         {
             this._prefixParseFn[tokenType] = fn;
@@ -476,6 +454,86 @@ namespace monkey_csharp.Monkey.Core
         private void RegisterInfix(TokenType tokenType, InfixParseFn fn)
         {
             this._infixParseFn[tokenType] = fn;
+        }
+
+        private Ast.IExpression ParseArrayLiteral()
+        {
+            var array = new Ast.ArrayLiteral
+            {
+                Token = this._curToken, 
+                Elements = ParseExpressionList(TokenType.Rbracket)
+            };
+
+            return array;
+        }
+        
+        private List<Ast.IExpression> ParseExpressionList(TokenType end)
+        {
+            var list = new List<Ast.IExpression>();
+
+            if (PeekTokenIs(TokenType.Rparen))
+            {
+                NextToken();
+                return list;
+            }
+            
+            NextToken();
+            list.Add(ParseExpression(Precedence.Lowest));
+
+            while (PeekTokenIs(TokenType.Comma))
+            {
+                NextToken();
+                NextToken();
+                list.Add(ParseExpression(Precedence.Lowest));
+            }
+
+            if (!ExpectPeek(end))
+                return null;
+
+            return list;
+        }
+
+        private Ast.IExpression ParseIndexExpression(Ast.IExpression left)
+        {
+            var exp = new Ast.IndexExpression {Token = this._curToken, Left = left};
+            
+            NextToken();
+            exp.Index = ParseExpression(Precedence.Lowest);
+
+            if (!ExpectPeek(TokenType.Rbracket))
+                return null;
+
+            return exp;
+        }
+
+        private Ast.IExpression ParseHashLiteral()
+        {
+            var hash = new Ast.HashLiteral {
+                Token = this._curToken,
+                Pairs = new Dictionary<Ast.IExpression, Ast.IExpression>()
+            };
+
+            while (!PeekTokenIs(TokenType.Rbrace))
+            {
+                NextToken();
+                var key = ParseExpression(Precedence.Lowest);
+
+                if (!ExpectPeek(TokenType.Colon))
+                    return null;
+                
+                NextToken();
+                var value = ParseExpression(Precedence.Lowest);
+
+                hash.Pairs[key] = value;
+
+                if (!PeekTokenIs(TokenType.Rbrace) && !ExpectPeek(TokenType.Comma))
+                    return null;
+            }
+
+            if (!ExpectPeek(TokenType.Rbrace))
+                return null;
+
+            return hash;
         }
     }
 }
