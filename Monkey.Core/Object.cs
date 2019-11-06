@@ -156,7 +156,7 @@ namespace monkey_csharp.Monkey.Core
 
         public string Inspect()
         {
-            var elm = string.Join(',', this.Elements.Select(e => e.Inspect()));
+            var elm = string.Join(',', this.Elements.Select(e => e?.Inspect()));
             return $"[{elm}]";
         }
 

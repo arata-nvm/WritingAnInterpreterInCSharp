@@ -468,7 +468,7 @@ namespace monkey_csharp.Monkey.Core
         {
             var list = new List<Ast.IExpression>();
 
-            if (PeekTokenIs(TokenType.Rparen))
+            if (PeekTokenIs(end))
             {
                 NextToken();
                 return list;
@@ -485,7 +485,7 @@ namespace monkey_csharp.Monkey.Core
             }
 
             if (!ExpectPeek(end))
-                return null;
+                return new List<Ast.IExpression>();
 
             return list;
         }

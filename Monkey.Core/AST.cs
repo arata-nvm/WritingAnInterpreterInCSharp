@@ -111,7 +111,7 @@ namespace monkey_csharp.Monkey.Core
         public class BlockStatement : IStatement
         {
             public Token Token;
-            public List<IStatement> Statements;
+            public List<IStatement> Statements = new List<IStatement>();
 
             public string TokenLiteral()
             {
@@ -288,7 +288,7 @@ namespace monkey_csharp.Monkey.Core
         public class FunctionLiteral : IExpression
         {
             public Token Token;
-            public List<Identifier> Parameters;
+            public List<Identifier> Parameters = new List<Identifier>();
             public BlockStatement Body;
 
             public string TokenLiteral()
@@ -311,7 +311,7 @@ namespace monkey_csharp.Monkey.Core
         {
             public Token Token;
             public IExpression Function;
-            public List<IExpression> Arguments;
+            public List<IExpression> Arguments = new List<IExpression>();
 
             public string TokenLiteral()
             {
@@ -332,7 +332,7 @@ namespace monkey_csharp.Monkey.Core
         public class ArrayLiteral : IExpression
         {
             public Token Token;
-            public List<IExpression> Elements;
+            public List<IExpression> Elements = new List<IExpression>();
 
             public string TokenLiteral()
             {
@@ -376,7 +376,7 @@ namespace monkey_csharp.Monkey.Core
         public class HashLiteral : IExpression
         {
             public Token Token;
-            public Dictionary<IExpression, IExpression> Pairs;
+            public Dictionary<IExpression, IExpression> Pairs = new Dictionary<IExpression, IExpression>();
 
             public string TokenLiteral()
             {

@@ -15,6 +15,7 @@ namespace monkey_csharp.Monkey.Core
          
         public static IObject Eval(Ast.INode node, Environment env)
         {
+            if (node == null) return null;
             var type = node.GetType();
 
             if (type == typeof(Ast.Code))

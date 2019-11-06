@@ -7,9 +7,9 @@ namespace monkey_csharp.Monkey.Tests
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Init()
         {
-            Repl.Start(Console.In, Console.Out);
+            
         }
     }
 }
