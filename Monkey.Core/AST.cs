@@ -43,7 +43,7 @@ namespace Monkey.Core
             }
         }
 
-        public class LetStatement : IStatement
+        public class VarStatement : IStatement
         {
             public Token Token;
             public Identifier Name;

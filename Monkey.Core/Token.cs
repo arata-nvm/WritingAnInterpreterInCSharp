@@ -36,7 +36,7 @@ namespace Monkey.Core
         Rbracket,
         
         Function,
-        Let,
+        Var,
         True,
         False,
         If,
@@ -49,7 +49,7 @@ namespace Monkey.Core
         private static readonly Dictionary<string, TokenType> Keywords = new Dictionary<string, TokenType>
         {
             {"func", TokenType.Function},
-            {"let", TokenType.Let},
+            {"var", TokenType.Var},
             {"true", TokenType.True},
             {"false", TokenType.False},
             {"if", TokenType.If},

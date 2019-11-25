@@ -34,11 +34,11 @@ namespace Monkey.Core
                 return new Return {Value = val};
             }
             
-            else if (type == typeof(Ast.LetStatement))
+            else if (type == typeof(Ast.VarStatement))
             {
-                var val = Eval(((Ast.LetStatement) node).Value, env);
+                var val = Eval(((Ast.VarStatement) node).Value, env);
                 if (IsError(val)) return val;
-                env.Set(((Ast.LetStatement) node).Name.Value, val);
+                env.Set(((Ast.VarStatement) node).Name.Value, val);
             }
             
             else if (type == typeof(Ast.IntegerLiteral))

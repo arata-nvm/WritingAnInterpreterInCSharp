@@ -143,8 +143,8 @@ namespace Monkey.Core
         {
             switch (this._curToken.Type)
             {
-                case TokenType.Let:
-                    return ParseLetStatement();
+                case TokenType.Var:
+                    return ParseVarStatement();
                 case TokenType.Return:
                     return ParseReturnStatement();
                 default:
@@ -152,9 +152,9 @@ namespace Monkey.Core
             }
         }
         
-        private Ast.LetStatement ParseLetStatement()
+        private Ast.VarStatement ParseVarStatement()
         {
-            var statement = new Ast.LetStatement {Token = this._curToken};
+            var statement = new Ast.VarStatement {Token = this._curToken};
             if (!ExpectPeek(TokenType.Ident)) return null;
 
             statement.Name = new Ast.Identifier {Token = this._curToken, Value = this._curToken.Literal};
