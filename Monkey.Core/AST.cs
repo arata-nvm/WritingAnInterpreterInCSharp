@@ -10,16 +10,10 @@ namespace Monkey.Core
         {
             string TokenLiteral();
         }
-        
-        public interface IStatement : INode
-        {
-            void StatementNode();
-        }
-        
-        public interface IExpression : INode
-        {
-            void ExpressionNode();
-        }
+
+        public interface IStatement : INode { }
+
+        public interface IExpression : INode { }
 
         public class Code : INode
         {
@@ -54,12 +48,7 @@ namespace Monkey.Core
             {
                 return this.Token.Literal;
             }
-
-            public void StatementNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
+            
             public override string ToString()
             {
                 return $"{this.TokenLiteral()} {this.Name} = {this.Value};";
@@ -78,11 +67,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void StatementNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
             public override string ToString()
             {
                 return $"{this.TokenLiteral()} {this.Name} = {this.Value};";
@@ -99,11 +83,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void StatementNode()
-            {
-                throw new System.NotImplementedException();
-            }
-            
             public override string ToString()
             {
                 return $"{this.TokenLiteral()} {this.ReturnValue};";
@@ -120,11 +99,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void StatementNode()
-            {
-                throw new System.NotImplementedException();
-            }
-            
             public override string ToString()
             {
                 return $"{this.Expression}";
@@ -141,11 +115,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void StatementNode()
-            {
-                throw new System.NotImplementedException();
-            }
-            
             public override string ToString()
             {
                 var sb = new StringBuilder();
@@ -163,12 +132,7 @@ namespace Monkey.Core
             {
                 return this.Token.Literal;
             }
-
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-            
+ 
             public override string ToString()
             {
                 return this.Value;
@@ -185,11 +149,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-            
             public override string ToString()
             {
                 return this.Token.Literal;
@@ -204,11 +163,6 @@ namespace Monkey.Core
             public string TokenLiteral()
             {
                 return this.Token.Literal;
-            }
-
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
             }
 
             public override string ToString()
@@ -227,11 +181,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
             public override string ToString()
             {
                 return TokenLiteral();
@@ -247,11 +196,6 @@ namespace Monkey.Core
             public string TokenLiteral()
             {
                 return this.Token.Literal;
-            }
-
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
             }
 
             public override string ToString()
@@ -272,11 +216,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
             public override string ToString()
             {
                 return $"({this.Left} {this.Operator} {this.Right})";
@@ -294,12 +233,7 @@ namespace Monkey.Core
             {
                 return this.Token.Literal;
             }
-
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
+            
             public override string ToString()
             {
                 return this.Alternative == null ?
@@ -319,11 +253,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
             public override string ToString()
             {
                 return $"{TokenLiteral()}({string.Join(",", Parameters)}) {{{this.Body}}}";
@@ -341,11 +270,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
             public override string ToString()
             {
                 return $"{this.Function}({string.Join(",", this.Arguments)})";
@@ -360,11 +284,6 @@ namespace Monkey.Core
             public string TokenLiteral()
             {
                 return this.Token.Literal;
-            }
-
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
             }
 
             public override string ToString()
@@ -385,11 +304,6 @@ namespace Monkey.Core
                 return this.Token.Literal;
             }
 
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
-            }
-
             public override string ToString()
             {
                 return $"({Left}[{Index}])";
@@ -404,11 +318,6 @@ namespace Monkey.Core
             public string TokenLiteral()
             {
                 return this.Token.Literal;
-            }
-
-            public void ExpressionNode()
-            {
-                throw new System.NotImplementedException();
             }
 
             public override string ToString()
