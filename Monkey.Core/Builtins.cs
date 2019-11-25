@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Array = Monkey.Core.Array;
+using String = Monkey.Core.String;
+using Type = Monkey.Core.Type;
 
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     public class Builtins
     {

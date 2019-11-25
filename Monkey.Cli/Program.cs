@@ -1,13 +1,21 @@
 ﻿using System;
-using monkey_csharp.Monkey.Core;
+using Monkey.Core;
 
-namespace monkey_csharp.Monkey.Cli
+namespace Monkey.Cli
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Repl.Start(Console.In, Console.Out, null);
+            if (args.Length < 1)
+            {
+                Console.WriteLine("Hello! This is the Monkey programming language.");
+                Console.WriteLine("Feel free to type in commands.");
+                Repl.Start(Console.In, Console.Out, null);
+            }
+
+            Repl.Exec(args[1]);
+            
         }
     }
 }

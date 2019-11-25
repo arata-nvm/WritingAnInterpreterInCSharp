@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     public class Lexer
     {
@@ -49,10 +47,10 @@ namespace monkey_csharp.Monkey.Core
             return this._input[this._readPosition];
         }
         
-                public Token NextToken()
+        public Token NextToken()
         {
             Token tok;
-            
+
             if (this._readPosition > this._input.Length)
             {
                 return new Token(TokenType.Eof, '\0');

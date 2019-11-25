@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     
     using BuiltinFunction = Func<List<IObject>, IObject>;
@@ -54,7 +54,7 @@ namespace monkey_csharp.Monkey.Core
     {
         public bool Value;
 
-        public Type getType() => Core.Type.Boolean;
+        public Type getType() => Type.Boolean;
 
         public string Inspect()
         {
@@ -69,7 +69,7 @@ namespace monkey_csharp.Monkey.Core
     
     public class Null : IObject
     {
-        public Type getType() => Core.Type.Null;
+        public Type getType() => Type.Null;
 
         public string Inspect()
         {
@@ -81,7 +81,7 @@ namespace monkey_csharp.Monkey.Core
     {
         public IObject Value;
         
-        public Type getType() => Core.Type.Return;
+        public Type getType() => Type.Return;
 
         public string Inspect()
         {
@@ -93,7 +93,7 @@ namespace monkey_csharp.Monkey.Core
     {
         public string Message;
         
-        public Type getType() => Core.Type.Error;
+        public Type getType() => Type.Error;
 
         public string Inspect()
         {
@@ -107,11 +107,11 @@ namespace monkey_csharp.Monkey.Core
         public Ast.BlockStatement Body;
         public Environment Env;
 
-        public Type getType() => Core.Type.Function;
+        public Type getType() => Type.Function;
 
         public string Inspect()
         {
-            var param = string.Join(',', Parameters);
+            var param = string.Join(",", Parameters);
             return $"func({param}) {{\n{Body}\n}}";
         }
     }
@@ -120,7 +120,7 @@ namespace monkey_csharp.Monkey.Core
     {
         public string Value;
 
-        public Type getType() => Core.Type.String;
+        public Type getType() => Type.String;
 
         public string Inspect()
         {
@@ -140,7 +140,7 @@ namespace monkey_csharp.Monkey.Core
     {
         public BuiltinFunction Fn;
 
-        public Type getType() => Core.Type.Builtin;
+        public Type getType() => Type.Builtin;
 
         public string Inspect()
         {
@@ -152,11 +152,11 @@ namespace monkey_csharp.Monkey.Core
     {
         public List<IObject> Elements;
 
-        public Type getType() => Core.Type.Array;
+        public Type getType() => Type.Array;
 
         public string Inspect()
         {
-            var elm = string.Join(',', this.Elements.Select(e => e?.Inspect()));
+            var elm = string.Join(",", this.Elements.Select(e => e?.Inspect()));
             return $"[{elm}]";
         }
 
@@ -212,7 +212,7 @@ namespace monkey_csharp.Monkey.Core
         public string Inspect()
         {
             var pairs = string.Join(
-                ',', 
+                ",", 
                 Pairs.Select(p => $"{p.Value.Key.Inspect()} : {p.Value.Value.Inspect()}")
                 );
             return $"{{{pairs}}}";

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     public class Environment
     {

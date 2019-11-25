@@ -1,6 +1,6 @@
 using System;
 
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     public class ParserTracing
     {

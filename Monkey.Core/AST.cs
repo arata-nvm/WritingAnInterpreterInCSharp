@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     public class Ast
     {
@@ -303,7 +303,7 @@ namespace monkey_csharp.Monkey.Core
 
             public override string ToString()
             {
-                return $"{TokenLiteral()}({string.Join(',', Parameters)}) {{{this.Body}}}";
+                return $"{TokenLiteral()}({string.Join(",", Parameters)}) {{{this.Body}}}";
             }
         }
         
@@ -325,7 +325,7 @@ namespace monkey_csharp.Monkey.Core
 
             public override string ToString()
             {
-                return $"{this.Function}({string.Join(',', this.Arguments)})";
+                return $"{this.Function}({string.Join(",", this.Arguments)})";
             }
         }
         
@@ -346,7 +346,7 @@ namespace monkey_csharp.Monkey.Core
 
             public override string ToString()
             {
-                var elem = string.Join(',', this.Elements.Select(e => e.ToString()));
+                var elem = string.Join(",", this.Elements.Select(e => e.ToString()));
                 return $"[{elem}]";
             }
         }
@@ -391,7 +391,7 @@ namespace monkey_csharp.Monkey.Core
             public override string ToString()
             {
                 var pairs = string.Join(
-                    ',', 
+                    ",",
                     Pairs.Select(p => $"{p.Key} : {p.Value}")
                 );
                 return $"{{{pairs}}}";

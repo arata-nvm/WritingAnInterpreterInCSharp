@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace monkey_csharp.Monkey.Core
+namespace Monkey.Core
 {
     using PrefixParseFn = Func<Ast.IExpression>;
     using InfixParseFn = Func<Ast.IExpression, Ast.IExpression>;
