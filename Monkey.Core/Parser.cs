@@ -111,13 +111,13 @@ namespace Monkey.Core
 
         private void PeekError(TokenType t)
         {
-            var msg = $"expected next token to be {t}, got {_peekToken.Type} instead";
+            var msg = $"{_peekToken.TokenPosition()} expected next token to be {t}, got {_peekToken.Type} instead";
             this.Errors.Add(msg);
         }
         
         private void NoPrefixParseFnError(TokenType t)
         {
-            var msg = $"no prefix parse function for {t} found";
+            var msg = $"{_peekToken.TokenPosition()} no prefix parse function for {t} found";
             this.Errors.Add(msg);
         }
         

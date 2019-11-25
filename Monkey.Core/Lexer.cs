@@ -5,6 +5,8 @@ namespace Monkey.Core
         string _input;
         int _position;
         int _readPosition;
+        int _line = 1;
+        int _column = 1;
         char _ch;
 
         public Lexer(string input)
@@ -32,6 +34,12 @@ namespace Monkey.Core
             else
             {
                 this._ch = this._input[this._readPosition];
+                this._column++;
+                if (this._ch == '\n')
+                {
+                    this._line++;
+                    this._column = 1;
+                }
             }
 
             this._position = this._readPosition;
@@ -50,10 +58,11 @@ namespace Monkey.Core
         public Token NextToken()
         {
             Token tok;
+            int line = _line, column = _column;
 
             if (this._readPosition > this._input.Length)
             {
-                return new Token(TokenType.Eof, '\0');
+                return new Token(TokenType.Eof, '\0', line, column);
             }
             
             SkipWhiteSpace();
@@ -66,33 +75,33 @@ namespace Monkey.Core
                         char ch = this._ch;
                         ReadChar();
                         string l = $"{ch}{this._ch}";
-                        tok = new Token(TokenType.Eq, l);
+                        tok = new Token(TokenType.Eq, l, line, column);
                     }
                     else
                     {
-                        tok = new Token(TokenType.Assign, this._ch);
+                        tok = new Token(TokenType.Assign, this._ch, line, column);
                     }
                     break;
                 case ':':
-                    tok = new Token(TokenType.Colon, this._ch);
+                    tok = new Token(TokenType.Colon, this._ch, line, column);
                     break;
                 case ';':
-                    tok = new Token(TokenType.Semicolon, this._ch);
+                    tok = new Token(TokenType.Semicolon, this._ch, line, column);
                     break;
                 case '(':
-                    tok = new Token(TokenType.Lparen, this._ch);
+                    tok = new Token(TokenType.Lparen, this._ch, line, column);
                     break;
                 case ')':
-                    tok = new Token(TokenType.Rparen, this._ch);
+                    tok = new Token(TokenType.Rparen, this._ch, line, column);
                     break;
                 case ',':
-                    tok = new Token(TokenType.Comma, this._ch);
+                    tok = new Token(TokenType.Comma, this._ch, line, column);
                     break;
                 case '+':
-                    tok = new Token(TokenType.Plus, this._ch);
+                    tok = new Token(TokenType.Plus, this._ch, line, column);
                     break;
                 case '-':
-                    tok = new Token(TokenType.Minus, this._ch);
+                    tok = new Token(TokenType.Minus, this._ch, line, column);
                     break;
                 case '!':
                     if (PeekChar() == '=')
@@ -100,54 +109,54 @@ namespace Monkey.Core
                         char ch = this._ch;
                         ReadChar();
                         string l = $"{ch}{this._ch}";
-                        tok = new Token(TokenType.NotEq, l);
+                        tok = new Token(TokenType.NotEq, l, line, column);
                     }
                     else
                     {
-                        tok = new Token(TokenType.Bang, this._ch);
+                        tok = new Token(TokenType.Bang, this._ch, line, column);
                     }
                     break;
                 case '*':
-                    tok = new Token(TokenType.Asterisc, this._ch);
+                    tok = new Token(TokenType.Asterisc, this._ch, line, column);
                     break;
                 case '/':
-                    tok = new Token(TokenType.Slash, this._ch);
+                    tok = new Token(TokenType.Slash, this._ch, line, column);
                     break;
                 case '<':
-                    tok = new Token(TokenType.Lt, this._ch);
+                    tok = new Token(TokenType.Lt, this._ch, line, column);
                     break;
                 case '>':
-                    tok = new Token(TokenType.Gt, this._ch);
+                    tok = new Token(TokenType.Gt, this._ch, line, column);
                     break;
                 case '{':
-                    tok = new Token(TokenType.Lbrace, this._ch);
+                    tok = new Token(TokenType.Lbrace, this._ch, line, column);
                     break;
                 case '}':
-                    tok = new Token(TokenType.Rbrace, this._ch);
+                    tok = new Token(TokenType.Rbrace, this._ch, line, column);
                     break;
                 case '[':
-                    tok = new Token(TokenType.Lbracket, this._ch);
+                    tok = new Token(TokenType.Lbracket, this._ch, line, column);
                     break;
                 case ']':
-                    tok = new Token(TokenType.Rbracket, this._ch);
+                    tok = new Token(TokenType.Rbracket, this._ch, line, column);
                     break;
                 case '"':
-                    tok = new Token(TokenType.String, ReadString());
+                    tok = new Token(TokenType.String, ReadString(), line, column);
                     break;
                 default: 
                     if (IsLetter(this._ch))
                     {
                         string l = ReadIdentifier();
                         TokenType t = Token.LookUpIdent(l);
-                        return new Token(t, l);
+                        return new Token(t, l, line, column);
                     }
                     else if (IsDigit(this._ch))
                     {
                         TokenType t = TokenType.Int;
                         string l = ReadNumber();
-                        return new Token(t, l);
+                        return new Token(t, l, line, column);
                     }
-                    tok = new Token(TokenType.Illegal, this._ch);
+                    tok = new Token(TokenType.Illegal, this._ch, line, column);
                     break;
                     
             }

@@ -61,22 +61,33 @@ namespace Monkey.Core
         
         public TokenType Type;
         public string Literal;
+        public int Line;
+        public int Column;
 
-        public Token(TokenType tokenType, char ch)
+        public Token(TokenType tokenType, char ch, int line, int column)
         {
-            this.Type = tokenType;
-            this.Literal = ch.ToString();
+                this.Type = tokenType;
+                this.Literal = ch.ToString();
+                this.Line = line;
+                this.Column = column;
         }
         
-        public Token(TokenType tokenType, string str)
+        public Token(TokenType tokenType, string str, int line, int column)
         {
             this.Type = tokenType;
             this.Literal = str;
+            this.Line = line;
+            this.Column = column;
         }
 
         public override string ToString()
         {
             return $"Token(Type: {this.Type}, Literal: {this.Literal})";
+        }
+
+        public string TokenPosition()
+        {
+            return $"({this.Line}, {this.Column})";
         }
         
         public static TokenType LookUpIdent(string ident)
