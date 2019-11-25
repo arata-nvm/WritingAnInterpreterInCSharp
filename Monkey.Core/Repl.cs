@@ -21,16 +21,6 @@ namespace Monkey.Core
             var b = File.ReadAllText(fileName);
             
             var l = new Lexer(b);
-
-            Token t;
-
-            while ((t = l.NextToken()).Type != TokenType.Eof)
-            {
-                Console.WriteLine(t);
-            }
-
-            return env;
-            
             var p = new Parser(l);
 
             var code = p.ParseCode();
