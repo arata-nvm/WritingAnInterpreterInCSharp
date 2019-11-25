@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Monkey.Core
 {
@@ -217,6 +219,8 @@ namespace Monkey.Core
                 return EvalIntegerInfixExpression(op, left, right);
             else if (left.getType() == Type.String && right.getType() == Type.String)
                 return EvalStringInfixExpression(op, left, right);
+            else if (op == "*" && left.getType() == Type.String && right.getType() == Type.Integer)
+                return EvalStringAndIntegerInfixExpression(op, left, right);
             else if (op == "==")
                 return FromNativeBoolean(left == right);
             else if (op == "!=")
@@ -225,6 +229,19 @@ namespace Monkey.Core
                 return new Error {Message = $"type mismatch: {left.getType()} {op} {right.getType()}"};
             else
                 return new Error {Message = $"unknown operator: {left.getType()} {op} {right.getType()}"};
+        }
+
+        private static IObject EvalStringAndIntegerInfixExpression(string op, IObject left, IObject right)
+        {
+            if (op != "*")
+                return new Error {Message = $"unknown operator: {left.getType()} {op} {right.getType()}"};
+
+            var leftVal = ((String) left).Value;
+            var rightVal = ((Integer) right).Value;
+
+            var repeatedVal = string.Concat(Enumerable.Repeat(leftVal, rightVal));
+            
+            return new String {Value = repeatedVal};
         }
 
         private static IObject EvalIntegerInfixExpression(string op, IObject left, IObject right)
