@@ -38,7 +38,16 @@ namespace Monkey.Core
             {
                 var val = Eval(((Ast.VarStatement) node).Value, env);
                 if (IsError(val)) return val;
-                env.Set(((Ast.VarStatement) node).Name.Value, val);
+                val = env.SetVariable(((Ast.VarStatement) node).Name.Value, val);
+                if (IsError(val)) return val;
+
+            }
+            else if (type == typeof(Ast.ValStatement))
+            {
+                var val = Eval(((Ast.ValStatement) node).Value, env);
+                if (IsError(val)) return val;
+                val = env.SetConstant(((Ast.ValStatement) node).Name.Value, val);
+                if (IsError(val)) return val;
             }
             
             else if (type == typeof(Ast.IntegerLiteral))
@@ -337,7 +346,7 @@ namespace Monkey.Core
 
             for (int i = 0; i < fn.Parameters.Count; i++)
             {
-                env.Set(fn.Parameters[i].Value, args[i]);
+                env.SetVariable(fn.Parameters[i].Value, args[i]);
             }
 
             return env;

@@ -65,6 +65,29 @@ namespace Monkey.Core
                 return $"{this.TokenLiteral()} {this.Name} = {this.Value};";
             }
         }
+        
+        public class ValStatement : IStatement
+        {
+            public Token Token;
+            public Identifier Name;
+            public IExpression Value;
+
+
+            public string TokenLiteral()
+            {
+                return this.Token.Literal;
+            }
+
+            public void StatementNode()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override string ToString()
+            {
+                return $"{this.TokenLiteral()} {this.Name} = {this.Value};";
+            }
+        }
 
         public class ReturnStatement : IStatement
         {

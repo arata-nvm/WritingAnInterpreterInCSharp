@@ -37,6 +37,7 @@ namespace Monkey.Core
         
         Function,
         Var,
+        Val,
         True,
         False,
         If,
@@ -50,6 +51,7 @@ namespace Monkey.Core
         {
             {"func", TokenType.Function},
             {"var", TokenType.Var},
+            {"val", TokenType.Val},
             {"true", TokenType.True},
             {"false", TokenType.False},
             {"if", TokenType.If},

@@ -145,6 +145,8 @@ namespace Monkey.Core
             {
                 case TokenType.Var:
                     return ParseVarStatement();
+                case TokenType.Val:
+                    return ParseValStatement();
                 case TokenType.Return:
                     return ParseReturnStatement();
                 default:
@@ -154,21 +156,49 @@ namespace Monkey.Core
         
         private Ast.VarStatement ParseVarStatement()
         {
-            var statement = new Ast.VarStatement {Token = this._curToken};
-            if (!ExpectPeek(TokenType.Ident)) return null;
+            var token = this._curToken;
+            var (name, value) = ParseDeclaration();
+            if (name == null || value == null) return null;
 
-            statement.Name = new Ast.Identifier {Token = this._curToken, Value = this._curToken.Literal};
+            return new Ast.VarStatement
+            {
+                Token = token,
+                Name = name,
+                Value = value
+            };
+        }
+        
+        private Ast.ValStatement ParseValStatement()
+        {
+            var token = this._curToken;
+            var (name, value) = ParseDeclaration();
+            if (name == null || value == null) return null;
 
-            if (!ExpectPeek(TokenType.Assign)) return null;
+            return new Ast.ValStatement
+            {
+                Token = token,
+                Name = name,
+                Value = value
+            };
+        }
+
+        private (Ast.Identifier, Ast.IExpression) ParseDeclaration()
+        {
+            var statement = new Ast.ValStatement {Token = this._curToken};
+            if (!ExpectPeek(TokenType.Ident)) return (null, null);
+
+            var name = new Ast.Identifier {Token = this._curToken, Value = this._curToken.Literal};
+
+            if (!ExpectPeek(TokenType.Assign)) return (null, null);
             
             NextToken();
 
-            statement.Value = ParseExpression(Precedence.Lowest);
+            var value = ParseExpression(Precedence.Lowest);
             
             if (PeekTokenIs(TokenType.Semicolon))
                 NextToken();
 
-            return statement;
+            return (name, value); 
         }
 
         private Ast.ReturnStatement ParseReturnStatement()
