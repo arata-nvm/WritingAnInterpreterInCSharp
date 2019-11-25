@@ -356,15 +356,9 @@ namespace Monkey.Core
             {
                 Token = this._curToken
             };
-
-            if (!ExpectPeek(TokenType.Lparen))
-                return null;
             
             NextToken();
             expression.Condition = ParseExpression(Precedence.Lowest);
-
-            if (!ExpectPeek(TokenType.Rparen))
-                return null;
 
             if (!ExpectPeek(TokenType.Lbrace))
                 return null;
