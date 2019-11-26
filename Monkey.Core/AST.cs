@@ -258,6 +258,24 @@ namespace Monkey.Core
                 return $"while {this.Condition} {this.Consequence}";
             }
         }
+
+        public class AssignExpression : IExpression
+        {
+            public Token Token;
+            public Identifier Name;
+            public IExpression Value;
+
+
+            public string TokenLiteral()
+            {
+                return this.Token.Literal;
+            }
+
+            public override string ToString()
+            {
+                return $"{this.Name} = {this.Value};";
+            }
+        }
         
         public class FunctionLiteral : IExpression
         {

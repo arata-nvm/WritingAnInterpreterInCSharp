@@ -9,6 +9,7 @@ namespace Monkey.Core
     public enum Precedence
     {
         Lowest,
+        Assign,
         Equals,
         LessGreater,
         Sum,
@@ -22,6 +23,7 @@ namespace Monkey.Core
     {
         private readonly Dictionary<TokenType, Precedence> _precedences = new Dictionary<TokenType, Precedence>
         {
+            {TokenType.Assign, Precedence.Assign},
             {TokenType.Eq, Precedence.Equals},
             {TokenType.NotEq, Precedence.Equals},
             {TokenType.Lt, Precedence.LessGreater},
@@ -78,6 +80,7 @@ namespace Monkey.Core
             RegisterInfix(TokenType.Gt, ParseInfixExpression);
             RegisterInfix(TokenType.Lparen, ParseCallExpression);
             RegisterInfix(TokenType.Lbracket, ParseIndexExpression);
+            RegisterInfix(TokenType.Assign, ParseAssignExpression);
             
             NextToken();
             NextToken();
@@ -393,6 +396,28 @@ namespace Monkey.Core
                 return null;
 
             expression.Consequence = ParseBlockStatement();
+
+            return expression;
+        }
+
+        private Ast.AssignExpression ParseAssignExpression(Ast.IExpression left)
+        {
+            if (left.GetType() != typeof(Ast.Identifier))
+            {
+                var msg = $"{_peekToken.TokenPosition()} expected identifier on left but got {left}";
+                this.Errors.Add(msg);
+                return null;
+            }
+                
+            var expression = new Ast.AssignExpression
+            {
+                Token = this._curToken,
+                Name = (Ast.Identifier) left
+            };
+
+            NextToken();
+
+            expression.Value = ParseExpression(Precedence.Lowest);
 
             return expression;
         }

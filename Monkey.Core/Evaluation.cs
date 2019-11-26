@@ -42,7 +42,6 @@ namespace Monkey.Core
                 if (IsError(val)) return val;
                 val = env.SetVariable(((Ast.VarStatement) node).Name.Value, val);
                 if (IsError(val)) return val;
-
             }
             else if (type == typeof(Ast.ValStatement))
             {

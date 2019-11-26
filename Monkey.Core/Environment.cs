@@ -48,6 +48,16 @@ namespace Monkey.Core
             return val;
         }
 
+        public bool ExistsVariable(string name)
+        {
+            return variables.ContainsKey(name);
+        }
+
+        public bool ExistsConstant(string name)
+        {
+            return constants.ContainsKey(name);
+        }
+
 
         public Environment Clone()
         {
