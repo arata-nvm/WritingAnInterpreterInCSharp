@@ -64,6 +64,7 @@ namespace Monkey.Core
             RegisterPrefix(TokenType.Function, ParseFunctionLiteral);
             RegisterPrefix(TokenType.Lbracket, ParseArrayLiteral);
             RegisterPrefix(TokenType.Lbrace, ParseHashLiteral);
+            RegisterPrefix(TokenType.While, ParseWhileExpression);
 
             this._infixParseFn = new Dictionary<TokenType, InfixParseFn>();
             RegisterInfix(TokenType.Plus, ParseInfixExpression);
@@ -373,6 +374,25 @@ namespace Monkey.Core
 
                 expression.Alternative = ParseBlockStatement();
             }
+
+            return expression;
+        }
+        
+        private Ast.WhileExpression ParseWhileExpression()
+        {
+            var expression = new Ast.WhileExpression()
+            {
+                Token = this._curToken
+            };
+            
+            NextToken();
+
+            expression.Condition = ParseExpression(Precedence.Lowest);
+
+            if (!ExpectPeek(TokenType.Lbrace))
+                return null;
+
+            expression.Consequence = ParseBlockStatement();
 
             return expression;
         }

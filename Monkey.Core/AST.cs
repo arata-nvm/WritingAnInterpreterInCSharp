@@ -242,6 +242,23 @@ namespace Monkey.Core
             }
         }
         
+        public class WhileExpression : IExpression
+        {
+            public Token Token;
+            public IExpression Condition;
+            public BlockStatement Consequence;
+
+            public string TokenLiteral()
+            {
+                return this.Token.Literal;
+            }
+            
+            public override string ToString()
+            {
+                return $"while {this.Condition} {this.Consequence}";
+            }
+        }
+        
         public class FunctionLiteral : IExpression
         {
             public Token Token;

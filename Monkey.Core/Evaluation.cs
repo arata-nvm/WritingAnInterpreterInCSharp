@@ -79,6 +79,8 @@ namespace Monkey.Core
             }
             else if (type == typeof(Ast.IfExpression))
                 return EvalIfExpression((Ast.IfExpression) node, env);
+            else if (type == typeof(Ast.WhileExpression))
+                return EvalWhileExpression((Ast.WhileExpression) node, env);
 
             else if (type == typeof(Ast.Identifier))
                 return EvalIdentifier((Ast.Identifier) node, env);
@@ -296,6 +298,22 @@ namespace Monkey.Core
             return Null;
         }
 
+        private static IObject EvalWhileExpression(Ast.WhileExpression we, Environment env)
+        {
+            var condition = Eval(we.Condition, env);
+            if (IsError(condition))
+                return condition;
+
+            IObject result = Null;
+            while (IsTruthy(condition))
+            {
+                result = Eval(we.Consequence, env);
+                condition = Eval(we.Condition, env);
+            }
+
+            return result;
+        }
+        
         private static bool IsTruthy(IObject obj)
         {
             if (obj == Null)

@@ -42,6 +42,7 @@ namespace Monkey.Core
         False,
         If,
         Else,
+        While,
         Return
     }
     
@@ -56,6 +57,7 @@ namespace Monkey.Core
             {"false", TokenType.False},
             {"if", TokenType.If},
             {"else", TokenType.Else},
+            {"while", TokenType.While},
             {"return", TokenType.Return}
         };
         
