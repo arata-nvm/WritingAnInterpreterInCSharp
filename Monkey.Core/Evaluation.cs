@@ -76,6 +76,20 @@ namespace Monkey.Core
                 if (IsError(left)) return right;
                 return EvalInfixExpression(infix.Operator, left, right);
             }
+            else if (type == typeof(Ast.AssignExpression))
+            {
+                var assign = (Ast.AssignExpression) node;
+                var val = Eval(assign.Value, env);
+                if (IsError(val)) return val;
+
+                if (env.ExistsVariable(assign.Name.Value))
+                    return env.SetVariable(assign.Name.Value, val);
+
+                if (env.ExistsConstant(assign.Name.Value))
+                    return env.SetConstant(assign.Name.Value, val);
+
+                return new Error {Message = $"cannot resolve identifier: {assign.Name.Value}"};
+            }
             else if (type == typeof(Ast.IfExpression))
                 return EvalIfExpression((Ast.IfExpression) node, env);
             else if (type == typeof(Ast.WhileExpression))
