@@ -20,7 +20,7 @@ namespace Monkey.Core
                 return env;
             }
 
-            var b = File.ReadAllText(fileName);
+            var b = File.ReadAllText(fileName).Trim();
             
             var l = new Lexer(b);
             var p = new Parser(l);

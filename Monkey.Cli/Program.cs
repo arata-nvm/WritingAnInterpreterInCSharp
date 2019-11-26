@@ -14,7 +14,7 @@ namespace Monkey.Cli
                 Repl.Start(Console.In, Console.Out, null);
             }
 
-            Repl.Exec(args[1]);
+            Repl.Exec(args[0]);
             
         }
     }
