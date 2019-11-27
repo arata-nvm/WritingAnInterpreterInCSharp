@@ -31,7 +31,11 @@ namespace Monkey.Core
                 PrintParserErrors(Console.Out, p.Errors);
             }
 
-            Evaluation.Eval(code, env);
+            var obj = Evaluation.Eval(code, env);
+            if (obj != null)
+            {
+                Console.Out.WriteLine(obj.Inspect());
+            }
             return env;
         }
 
