@@ -390,7 +390,7 @@ namespace Monkey.Core
 
         private static Environment ExtendFunctionEnv(Function fn, List<IObject> args)
         {
-            var env = fn.Env.Clone();
+            var env = fn.Env.CreateEnclosedEnvironment();
 
             for (int i = 0; i < fn.Parameters.Count; i++)
             {

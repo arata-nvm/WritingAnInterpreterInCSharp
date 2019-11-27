@@ -6,6 +6,8 @@ namespace Monkey.Core
     {
         private Dictionary<string, IObject> variables;
         private Dictionary<string, IObject> constants;
+
+        private Environment outer;
         
         public Environment()
         {
@@ -16,15 +18,12 @@ namespace Monkey.Core
         public IObject Get(string name)
         {
             if (variables.TryGetValue(name, out var value))
-            {
                 return value;
-            }
-            else if (constants.TryGetValue(name, out value))
-            {
-                return value;
-            }
 
-            return null;
+            if (constants.TryGetValue(name, out value))
+                return value;
+
+            return outer?.Get(name);
         }
 
         public IObject SetVariable(string name, IObject val)
@@ -59,9 +58,9 @@ namespace Monkey.Core
         }
 
 
-        public Environment Clone()
+        public Environment CreateEnclosedEnvironment()
         {
-            return new Environment {variables = this.variables};
+            return new Environment {outer = this};
         }
     }
 }
