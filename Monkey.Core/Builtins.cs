@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Array = Monkey.Core.Array;
 using String = Monkey.Core.String;
@@ -18,7 +19,9 @@ namespace Monkey.Core
             {"pop", new Builtin {Name = "pop", Fn = Pop}},
             {"print", new Builtin {Name = "print", Fn = Print}},
             {"input", new Builtin {Name = "input", Fn = Input}},
-            {"exit", new Builtin {Name = "exit", Fn = Exit}}
+            {"exit", new Builtin {Name = "exit", Fn = Exit}},
+            {"read", new Builtin {Name = "read", Fn = Read}},
+            {"write", new Builtin {Name = "write", Fn = Write}}
         };
 
         private static IObject Len(List<IObject> args)
@@ -146,6 +149,42 @@ namespace Monkey.Core
             if (args[0].getType() != Type.Integer)
                 return new Error {Message = $"argument to `exit` must be INTEGER. got {args[0].getType()}"};
             System.Environment.Exit(((Integer)args[0]).Value);
+            return null;
+        }
+
+        private static IObject Read(List<IObject> args)
+        {
+            if (args.Count != 1)
+                return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
+
+            if (args[0].getType() != Type.String)
+                return new Error {Message = $"argument to `read` must be STRING. got {args[0].getType()}"};
+
+            var filename = ((String) args[0]).Value;
+            if (!File.Exists(filename))
+                return new Error {Message = $"file not found: {filename}"};
+
+            var data = File.ReadAllText(filename);
+            return new String {Value = data};
+        }
+        
+        private static IObject Write(List<IObject> args)
+        {
+            if (args.Count != 2)
+                return new Error {Message = $"wrong number of arguments. got={args.Count}, want=2"};
+
+            if (args[0].getType() != Type.String)
+                return new Error {Message = $"argument1 to `read` must be STRING. got {args[0].getType()}"};
+
+            if (args[1].getType() != Type.String)
+                return new Error {Message = $"argument2 to `read` must be STRING. got {args[0].getType()}"};
+
+            
+            var filename = ((String) args[0]).Value;
+            var data = ((String) args[1]).Value;
+            
+            File.WriteAllText(filename, data);
+
             return null;
         }
     }
