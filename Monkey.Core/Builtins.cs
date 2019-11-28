@@ -112,6 +112,13 @@ namespace Monkey.Core
 
                 var line = Console.In.ReadLine();
                 return new String {Value = line};
+            }}},
+            {"exit", new Builtin {Fn = args => {
+                if (args.Count != 1) System.Environment.Exit(0);
+                if (args[0].getType() != Type.Integer)
+                    return new Error {Message = $"argument to `exit` must be INTEGER. got {args[0].getType()}"};
+                System.Environment.Exit(((Integer)args[0]).Value);
+                return null;
             }}}
         };
     }
