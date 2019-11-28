@@ -123,10 +123,26 @@ namespace Monkey.Core
                     tok = new Token(TokenType.Slash, this._ch, line, column);
                     break;
                 case '<':
-                    tok = new Token(TokenType.Lt, this._ch, line, column);
+                    if (PeekChar() == '=')
+                    {
+                        ReadChar();
+                        tok = new Token(TokenType.Lte, "<=", line, column);
+                    }
+                    else
+                    {
+                        tok = new Token(TokenType.Lt, this._ch, line, column);
+                    }
                     break;
                 case '>':
-                    tok = new Token(TokenType.Gt, this._ch, line, column);
+                    if (PeekChar() == '=')
+                    {
+                        ReadChar();
+                        tok = new Token(TokenType.Gte, ">=", line, column);
+                    }
+                    else
+                    {
+                        tok = new Token(TokenType.Gt, this._ch, line, column);
+                    }
                     break;
                 case '{':
                     tok = new Token(TokenType.Lbrace, this._ch, line, column);

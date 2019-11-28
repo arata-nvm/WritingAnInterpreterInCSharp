@@ -19,7 +19,10 @@ namespace Monkey.Core
         Slash,
         
         Lt,
+        Lte,
+        
         Gt,
+        Gte,
         
         Eq,
         NotEq,

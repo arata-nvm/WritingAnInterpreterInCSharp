@@ -28,6 +28,8 @@ namespace Monkey.Core
             {TokenType.NotEq, Precedence.Equals},
             {TokenType.Lt, Precedence.LessGreater},
             {TokenType.Gt, Precedence.LessGreater},
+            {TokenType.Lte, Precedence.LessGreater},
+            {TokenType.Gte, Precedence.LessGreater},
             {TokenType.Plus, Precedence.Sum},
             {TokenType.Minus, Precedence.Sum},
             {TokenType.Slash, Precedence.Product},
@@ -78,6 +80,8 @@ namespace Monkey.Core
             RegisterInfix(TokenType.NotEq, ParseInfixExpression);
             RegisterInfix(TokenType.Lt, ParseInfixExpression);
             RegisterInfix(TokenType.Gt, ParseInfixExpression);
+            RegisterInfix(TokenType.Lte, ParseInfixExpression);
+            RegisterInfix(TokenType.Gte, ParseInfixExpression);
             RegisterInfix(TokenType.Lparen, ParseCallExpression);
             RegisterInfix(TokenType.Lbracket, ParseIndexExpression);
             RegisterInfix(TokenType.Assign, ParseAssignExpression);

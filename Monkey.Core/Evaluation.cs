@@ -276,8 +276,12 @@ namespace Monkey.Core
                     return new Integer {Value = leftVal / rightVal};
                 case "<":
                     return FromNativeBoolean(leftVal < rightVal);
+                case "<=":
+                    return FromNativeBoolean(leftVal <= rightVal);
                 case ">":
                     return FromNativeBoolean(leftVal > rightVal);
+                case ">=":
+                    return FromNativeBoolean(leftVal >= rightVal);
                 case "==":
                     return FromNativeBoolean(leftVal == rightVal);
                 case "!=":
