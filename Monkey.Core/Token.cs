@@ -19,6 +19,10 @@ namespace Monkey.Core
         Slash,
         Percent,
         
+        And,
+        Or,
+        Xor,
+
         Lt,
         Lte,
         

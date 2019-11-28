@@ -12,6 +12,9 @@ namespace Monkey.Core
         Assign,
         Equals,
         LessGreater,
+        Or,
+        Xor,
+        And,
         Sum,
         Product,
         Prefix,
@@ -30,6 +33,9 @@ namespace Monkey.Core
             {TokenType.Gt, Precedence.LessGreater},
             {TokenType.Lte, Precedence.LessGreater},
             {TokenType.Gte, Precedence.LessGreater},
+            {TokenType.Or, Precedence.Or},
+            {TokenType.Xor, Precedence.Xor},
+            {TokenType.And, Precedence.And},
             {TokenType.Plus, Precedence.Sum},
             {TokenType.Minus, Precedence.Sum},
             {TokenType.Slash, Precedence.Product},
@@ -77,6 +83,9 @@ namespace Monkey.Core
             RegisterInfix(TokenType.Slash, ParseInfixExpression);
             RegisterInfix(TokenType.Asterisc, ParseInfixExpression);
             RegisterInfix(TokenType.Percent, ParseInfixExpression);
+            RegisterInfix(TokenType.Or, ParseInfixExpression);
+            RegisterInfix(TokenType.Xor, ParseInfixExpression);
+            RegisterInfix(TokenType.And, ParseInfixExpression);
             RegisterInfix(TokenType.Eq, ParseInfixExpression);
             RegisterInfix(TokenType.Plus, ParseInfixExpression);
             RegisterInfix(TokenType.NotEq, ParseInfixExpression);

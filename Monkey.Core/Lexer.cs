@@ -122,6 +122,15 @@ namespace Monkey.Core
                 case '%':
                     tok = new Token(TokenType.Percent, this._ch, line, column);
                     break;
+                case '&':
+                    tok = new Token(TokenType.And, this._ch, line, column);
+                    break;
+                case '|':
+                    tok = new Token(TokenType.Or, this._ch, line, column);
+                    break;
+                case '^':
+                    tok = new Token(TokenType.Xor, this._ch, line, column);
+                    break;
                 case '/':
                     tok = new Token(TokenType.Slash, this._ch, line, column);
                     break;
