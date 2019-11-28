@@ -119,6 +119,9 @@ namespace Monkey.Core
                 case '*':
                     tok = new Token(TokenType.Asterisc, this._ch, line, column);
                     break;
+                case '%':
+                    tok = new Token(TokenType.Percent, this._ch, line, column);
+                    break;
                 case '/':
                     tok = new Token(TokenType.Slash, this._ch, line, column);
                     break;

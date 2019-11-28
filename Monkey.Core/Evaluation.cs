@@ -272,6 +272,8 @@ namespace Monkey.Core
                     return new Integer {Value = leftVal - rightVal};
                 case "*":
                     return new Integer {Value = leftVal * rightVal};
+                case "%":
+                    return new Integer {Value = leftVal % rightVal};
                 case "/":
                     return new Integer {Value = leftVal / rightVal};
                 case "<":

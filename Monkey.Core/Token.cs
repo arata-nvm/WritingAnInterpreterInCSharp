@@ -17,6 +17,7 @@ namespace Monkey.Core
         Bang,
         Asterisc,
         Slash,
+        Percent,
         
         Lt,
         Lte,

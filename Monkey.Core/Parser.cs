@@ -33,7 +33,8 @@ namespace Monkey.Core
             {TokenType.Plus, Precedence.Sum},
             {TokenType.Minus, Precedence.Sum},
             {TokenType.Slash, Precedence.Product},
-            {TokenType.Asterisc, Precedence.Prefix},
+            {TokenType.Asterisc, Precedence.Product},
+            {TokenType.Percent, Precedence.Product},
             {TokenType.Lparen, Precedence.Call},
             {TokenType.Lbracket, Precedence.Index}
         };
@@ -75,6 +76,7 @@ namespace Monkey.Core
             RegisterInfix(TokenType.Minus, ParseInfixExpression);
             RegisterInfix(TokenType.Slash, ParseInfixExpression);
             RegisterInfix(TokenType.Asterisc, ParseInfixExpression);
+            RegisterInfix(TokenType.Percent, ParseInfixExpression);
             RegisterInfix(TokenType.Eq, ParseInfixExpression);
             RegisterInfix(TokenType.Plus, ParseInfixExpression);
             RegisterInfix(TokenType.NotEq, ParseInfixExpression);
