@@ -376,6 +376,23 @@ namespace Monkey.Core
             if (PeekTokenIs(TokenType.Else))
             {
                 NextToken();
+
+                if (PeekTokenIs(TokenType.If))
+                {
+                    NextToken();
+                    expression.Alternative = new Ast.BlockStatement
+                    {
+                        Statements = new List<Ast.IStatement>
+                        {
+                            new Ast.ExpressionStatement
+                            {
+                                Expression = ParseIfExpression()
+                            }
+                        }
+                    };
+                    return expression;
+                }
+                
                 if (!ExpectPeek(TokenType.Lbrace))
                     return null;
 
