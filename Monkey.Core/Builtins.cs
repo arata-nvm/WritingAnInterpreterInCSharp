@@ -79,7 +79,7 @@ namespace Monkey.Core
 
                 return arr;
             }}},
-            {"puts", new Builtin {Fn = args => {
+            {"print", new Builtin {Fn = args => {
                 args.ForEach(arg => Console.WriteLine(arg.Inspect()));
 
                 return Evaluation.Null;

@@ -10,7 +10,7 @@ val book = {
 val printBookName = func(book) {
     val title = book["title"];
     val author = book["author"];
-    puts(author + " - " + title);
+    print(author + " - " + title);
 };
 
 printBookName(book);
