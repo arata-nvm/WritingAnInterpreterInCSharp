@@ -79,6 +79,24 @@ namespace Monkey.Core
 
                 return arr;
             }}},
+            {"pop", new Builtin {Fn = args => {
+                if (args.Count != 1)
+                    return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
+
+                if (args[0].getType() != Type.Array)
+                    return new Error {Message = $"argument to `push` must be ARRAY. got {args[0].getType()}"};
+
+                var arr = (Array) args[0];
+                var length = arr.Elements.Count;
+
+                if (length == 0)
+                    return new Error {Message = "cannot pop from an empty array"};
+
+                var element = arr.Elements[length - 1];
+                arr.Elements.RemoveAt(length - 1);
+
+                return element;
+            }}},
             {"print", new Builtin {Fn = args => {
                 args.ForEach(arg => Console.WriteLine(arg.Inspect()));
 
