@@ -84,6 +84,17 @@ namespace Monkey.Core
 
                 return Evaluation.Null;
             }}},
+            {"input", new Builtin {Fn = args => {
+                if (args.Count != 0)
+                {
+                    if (args[0].getType() != Type.String)
+                        return new Error {Message = $"argument to `input` not supported. got {args[0]}"};
+                    Console.Out.Write(((String)args[0]).Value);
+                }
+
+                var line = Console.In.ReadLine();
+                return new String {Value = line};
+            }}}
         };
     }
 }
