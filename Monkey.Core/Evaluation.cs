@@ -236,6 +236,8 @@ namespace Monkey.Core
                 return EvalStringInfixExpression(op, left, right);
             else if (op == "*" && left.getType() == Type.String && right.getType() == Type.Integer)
                 return EvalStringAndIntegerInfixExpression(op, left, right);
+            else if (op == "*" && left.getType() == Type.Integer && right.getType() == Type.String)
+                return EvalStringAndIntegerInfixExpression(op, right, left);
             else if (op == "==")
                 return FromNativeBoolean(left == right);
             else if (op == "!=")
