@@ -138,13 +138,14 @@ namespace Monkey.Core
     
     public class Builtin : IObject
     {
+        public string Name;
         public BuiltinFunction Fn;
 
         public Type getType() => Type.Builtin;
 
         public string Inspect()
         {
-            return "builtin function";
+            return $"<built-in function {this.Name}>";
         }
     }
     

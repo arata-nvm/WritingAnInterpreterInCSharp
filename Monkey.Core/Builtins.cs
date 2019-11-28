@@ -11,7 +11,7 @@ namespace Monkey.Core
     {
         public static readonly Dictionary<string, Builtin> BuiltinFunctions = new Dictionary<string, Builtin>
         {
-            {"len", new Builtin {Fn = args => {
+            {"len", new Builtin {Name = "len", Fn = args => {
                 if (args.Count != 1)
                     return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
                 
@@ -23,7 +23,7 @@ namespace Monkey.Core
                 
                 return new Error {Message = $"argument to `len` not supported, got {args[0].getType()}"}; 
             }}},
-            {"first", new Builtin {Fn = args => {
+            {"first", new Builtin {Name = "first", Fn = args => {
                if (args.Count != 1)
                    return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
 
@@ -36,7 +36,7 @@ namespace Monkey.Core
 
                return Evaluation.Null;
             }}},
-            {"last", new Builtin {Fn = args => {
+            {"last", new Builtin {Name = "last", Fn = args => {
                 if (args.Count != 1)
                     return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
 
@@ -50,7 +50,7 @@ namespace Monkey.Core
 
                 return Evaluation.Null;
             }}},
-            {"rest", new Builtin {Fn = args => {
+            {"rest", new Builtin {Name = "rest", Fn = args => {
                 if (args.Count != 1)
                     return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
 
@@ -67,7 +67,7 @@ namespace Monkey.Core
 
                 return Evaluation.Null;
             }}},
-            {"push", new Builtin {Fn = args => {
+            {"push", new Builtin {Name = "push", Fn = args => {
                 if (args.Count != 2)
                     return new Error {Message = $"wrong number of arguments. got={args.Count}, want=2"};
 
@@ -79,7 +79,7 @@ namespace Monkey.Core
 
                 return arr;
             }}},
-            {"pop", new Builtin {Fn = args => {
+            {"pop", new Builtin {Name = "pop", Fn = args => {
                 if (args.Count != 1)
                     return new Error {Message = $"wrong number of arguments. got={args.Count}, want=1"};
 
@@ -97,12 +97,12 @@ namespace Monkey.Core
 
                 return element;
             }}},
-            {"print", new Builtin {Fn = args => {
+            {"print", new Builtin {Name = "print", Fn = args => {
                 args.ForEach(arg => Console.WriteLine(arg.Inspect()));
 
                 return Evaluation.Null;
             }}},
-            {"input", new Builtin {Fn = args => {
+            {"input", new Builtin {Name = "input", Fn = args => {
                 if (args.Count != 0)
                 {
                     if (args[0].getType() != Type.String)
@@ -113,7 +113,7 @@ namespace Monkey.Core
                 var line = Console.In.ReadLine();
                 return new String {Value = line};
             }}},
-            {"exit", new Builtin {Fn = args => {
+            {"exit", new Builtin {Name = "exit", Fn = args => {
                 if (args.Count != 1) System.Environment.Exit(0);
                 if (args[0].getType() != Type.Integer)
                     return new Error {Message = $"argument to `exit` must be INTEGER. got {args[0].getType()}"};
