@@ -426,6 +426,8 @@ namespace Monkey.Core
                 return EvalArrayExpression(left, index);
             if (left.getType() == Type.Hash)
                 return EvalHashIndexExpression(left, index);
+            if (left.getType() == Type.String)
+                return EvalStringIndexExpression(left, index);
 
             return new Error {Message = $"index operator not supported: {left.getType()}"};
         }
@@ -453,6 +455,18 @@ namespace Monkey.Core
                 return Null;
 
             return arrayObject.Elements[idx];
+        }
+        
+        private static IObject EvalStringIndexExpression(IObject str, IObject index)
+        {
+            var stringObject = (String) str;
+            var idx = ((Integer) index).Value;
+            var max = stringObject.Value.Length - 1;
+
+            if (idx < 0 || idx > max)
+                return Null;
+
+            return new String {Value = $"{stringObject.Value[idx]}"};
         }
 
         private static IObject EvalHashLiteral(Ast.HashLiteral node, Environment env)
