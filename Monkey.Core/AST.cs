@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Monkey.Core
 {
-    public class Ast
+    public static class Ast
     {
         public interface INode
         {
@@ -32,7 +32,7 @@ namespace Monkey.Core
             public override string ToString()
             {
                 var sb = new StringBuilder();
-                this.Statements.ForEach(s => { sb.Append(s); });
+                Statements.ForEach(s => { sb.Append(s); });
                 return sb.ToString();
             }
         }
@@ -46,12 +46,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
             
             public override string ToString()
             {
-                return $"{this.TokenLiteral()} {this.Name} = {this.Value};";
+                return $"{TokenLiteral()} {Name} = {Value};";
             }
         }
         
@@ -64,12 +64,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"{this.TokenLiteral()} {this.Name} = {this.Value};";
+                return $"{TokenLiteral()} {Name} = {Value};";
             }
         }
 
@@ -80,12 +80,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"{this.TokenLiteral()} {this.ReturnValue};";
+                return $"{TokenLiteral()} {ReturnValue};";
             }
         }
 
@@ -96,12 +96,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"{this.Expression}";
+                return $"{Expression}";
             }
         }
 
@@ -112,7 +112,7 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
@@ -130,12 +130,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
  
             public override string ToString()
             {
-                return this.Value;
+                return Value;
             }
         }
         
@@ -146,12 +146,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
         }
         
@@ -162,7 +162,7 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
@@ -178,7 +178,7 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
@@ -195,12 +195,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"({this.Operator}{this.Right})";
+                return $"({Operator}{Right})";
             }
         }
         
@@ -213,12 +213,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"({this.Left} {this.Operator} {this.Right})";
+                return $"({Left} {Operator} {Right})";
             }
         }
         
@@ -231,14 +231,14 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
             
             public override string ToString()
             {
-                return this.Alternative == null ?
-                    $"if{this.Condition} {this.Consequence}"
-                    : $"if{this.Condition} {this.Consequence}else {this.Alternative}";
+                return Alternative == null ?
+                    $"if{Condition} {Consequence}"
+                    : $"if{Condition} {Consequence}else {Alternative}";
             }
         }
         
@@ -250,12 +250,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
             
             public override string ToString()
             {
-                return $"while {this.Condition} {this.Consequence}";
+                return $"while {Condition} {Consequence}";
             }
         }
 
@@ -268,12 +268,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"{this.Name} = {this.Value};";
+                return $"{Name} = {Value};";
             }
         }
         
@@ -285,12 +285,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"{TokenLiteral()}({string.Join(",", Parameters)}) {{{this.Body}}}";
+                return $"{TokenLiteral()}({string.Join(",", Parameters)}) {{{Body}}}";
             }
         }
         
@@ -302,12 +302,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                return $"{this.Function}({string.Join(",", this.Arguments)})";
+                return $"{Function}({string.Join(",", Arguments)})";
             }
         }
         
@@ -318,12 +318,12 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
             {
-                var elem = string.Join(",", this.Elements.Select(e => e.ToString()));
+                var elem = string.Join(",", Elements.Select(e => e.ToString()));
                 return $"[{elem}]";
             }
         }
@@ -336,7 +336,7 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()
@@ -352,7 +352,7 @@ namespace Monkey.Core
 
             public string TokenLiteral()
             {
-                return this.Token.Literal;
+                return Token.Literal;
             }
 
             public override string ToString()

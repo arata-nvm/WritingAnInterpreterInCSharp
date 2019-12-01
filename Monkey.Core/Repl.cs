@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Monkey.Core
 {
-    public class Repl
+    public static class Repl
     {
         public static readonly string Prompt = ">> ";
         public static readonly string BlockPrompt = ".. ";

@@ -15,7 +15,7 @@ namespace Monkey.Core
         Plus,
         Minus,
         Bang,
-        Asterisc,
+        Asterisk,
         Slash,
         Percent,
         

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Monkey.Core
 {
-    public class Evaluation
+    public static class Evaluation
     {
         public static readonly Boolean True = new Boolean {Value = true};
         public static readonly Boolean False = new Boolean {Value = false}; 
@@ -159,7 +158,7 @@ namespace Monkey.Core
             return result;
         }
 
-        private static IObject EvalStatements(List<Ast.IStatement> statements, Environment env)
+        private static IObject EvalStatements(IEnumerable<Ast.IStatement> statements, Environment env)
         {
             IObject result = null;
             

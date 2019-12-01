@@ -41,7 +41,7 @@ namespace Monkey.Core
 
         public string Inspect()
         {
-            return $"{this.Value}";
+            return $"{Value}";
         }
 
         public HashKey HashKey()
@@ -58,12 +58,12 @@ namespace Monkey.Core
 
         public string Inspect()
         {
-            return $"{this.Value}";
+            return $"{Value}";
         }
 
         public HashKey HashKey()
         {
-            return new HashKey {Type = getType(), Value = this.Value ? 1 : 0};
+            return new HashKey {Type = getType(), Value = Value ? 1 : 0};
         }
     }
     
@@ -124,7 +124,7 @@ namespace Monkey.Core
 
         public string Inspect()
         {
-            return this.Value;
+            return Value;
         }
 
         public HashKey HashKey()
@@ -145,7 +145,7 @@ namespace Monkey.Core
 
         public string Inspect()
         {
-            return $"<built-in function {this.Name}>";
+            return $"<built-in function {Name}>";
         }
     }
     
@@ -157,13 +157,13 @@ namespace Monkey.Core
 
         public string Inspect()
         {
-            var elm = string.Join(",", this.Elements.Select(e => e?.Inspect()));
+            var elm = string.Join(",", Elements.Select(e => e?.Inspect()));
             return $"[{elm}]";
         }
 
         public Array Clone()
         {
-            return new Array {Elements = new List<IObject>(this.Elements)};
+            return new Array {Elements = new List<IObject>(Elements)};
         }
     }
     

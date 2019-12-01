@@ -4,63 +4,63 @@ namespace Monkey.Core
 {
     public class Environment
     {
-        private Dictionary<string, IObject> variables;
-        private Dictionary<string, IObject> constants;
+        private readonly Dictionary<string, IObject> _variables;
+        private readonly Dictionary<string, IObject> _constants;
 
-        private Environment outer;
+        private Environment _outer;
         
         public Environment()
         {
-            this.variables = new Dictionary<string, IObject>();
-            this.constants = new Dictionary<string, IObject>();
+            this._variables = new Dictionary<string, IObject>();
+            this._constants = new Dictionary<string, IObject>();
         }
 
         public IObject Get(string name)
         {
-            if (variables.TryGetValue(name, out var value))
+            if (_variables.TryGetValue(name, out var value))
                 return value;
 
-            if (constants.TryGetValue(name, out value))
+            if (_constants.TryGetValue(name, out value))
                 return value;
 
-            return outer?.Get(name);
+            return _outer?.Get(name);
         }
 
         public IObject SetVariable(string name, IObject val)
         {
-            if (constants.ContainsKey(name))
+            if (_constants.ContainsKey(name))
                 return new Error {Message = "constant with the same name is already declared"};
             
-            variables[name] = val;
+            _variables[name] = val;
             return val;
         }
         
         public IObject SetConstant(string name, IObject val)
         {
-            if (variables.ContainsKey(name))
+            if (_variables.ContainsKey(name))
                 return new Error {Message = "variable with the same name is already declared"};
             
-            if (constants.ContainsKey(name))
+            if (_constants.ContainsKey(name))
                 return new Error {Message = "constant value cannot be changed"};
             
-            constants[name] = val;
+            _constants[name] = val;
             return val;
         }
 
         public bool ExistsVariable(string name)
         {
-            return variables.ContainsKey(name);
+            return _variables.ContainsKey(name);
         }
 
         public bool ExistsConstant(string name)
         {
-            return constants.ContainsKey(name);
+            return _constants.ContainsKey(name);
         }
 
 
         public Environment CreateEnclosedEnvironment()
         {
-            return new Environment {outer = this};
+            return new Environment {_outer = this};
         }
     }
 }
